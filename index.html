@@ -48,42 +48,21 @@
 	<main>
 		<h1 class="text-center">Gestión Tienda</h1>
 		<div>
-			<h2>Gestión de Ventas</h2>
-			<form action="#" method="post" enctype="application/x-www-form-urlencoded">
-				<fieldset>
-					<label>
-						Articulo:
-						<input class="form-control" type="text" placeholder="Ej: 01-0100" />
-					</label>
-					<label>
-						Cantidad vendida:
-						<input class="form-control" type="text" placeholder="Ej: 1" />
-					</label>
-					<label>
-						Porcentaje de descuento:
-						<input class="form-control" type="email" placeholder="Ej: 10%" />
-					</label>
-					<div>
-						<h3>Marque método de pago</h3>
-					</div>
-					<div>
-						<label>
-							<input class="form-check-input" type="checkbox" name="efectivo" value="EF" />efectivo
-						</label>
-						<label>
-							<input class="form-check-input" type="checkbox" name="tarjeta" value="TJ" />tarjeta de
-							crédito
-						</label>
-						<label>
-							<input class="form-check-input" type="checkbox" name="cuenta" value="CP" />cuenta personal
-						</label>
-					</div>
-					<div>
-						<input class="btn btn-secondary" type="submit" value="Cargar Venta" />
-						<input class="btn btn-secondary" type="reset" value="Resetear" />
-					</div>
-				</fieldset>
+			<h2 class="text-center">Gestión de Ventas</h2>
+			<form id="formVentas">
+
+				<input id="art" type="text" placeholder="01-1000">
+
+				<input id="cant" type="number" placeholder="cantidad">
+
+				<input class="form-check-input" type="checkbox" name="efectivo" value="EF" />efectivo
+				<input class="form-check-input" type="checkbox" name="tarjeta" value="TJ" />tarjeta de crédito
+				<input class="form-check-input" type="checkbox" name="cuenta" value="CP" />cuenta personal <br>
+
+				<input class="btn btn-secondary" type="submit" value="Confirmar">
+				<input class="btn btn-secondary" type="reset" value="Borrar" />
 			</form>
+			<p id="mensajeVenta"></p>
 		</div>
 	</main>
 	<script src="js/codigo.js"></script>
