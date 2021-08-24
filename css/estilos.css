@@ -1,0 +1,32 @@
+.botonVta{
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+.formParaVenta {
+    padding: 20px;
+    display: none;
+}
+
+
+.botonInfo {
+    padding-left: 20px;
+    padding-top: 40px;
+}
+
+.formInfoArt {
+    padding: 20px;
+    display: none;
+}
+
+#parrafoInfo{
+    height: 60px;
+    padding: 20px;
+    margin: 20px;
+}
+
+#parrafoAler{
+    height: 60px;
+    padding: 20px;
+    margin: 20px;
+}
