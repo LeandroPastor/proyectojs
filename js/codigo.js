@@ -91,7 +91,7 @@ function validarFormularioVentas(e) {
 
 };
 
-//Array para registrar ventas y función para subirlas al localStorage para después poder filtrar por fechas, por artículo, etc
+//Array para registrar ventas y función para subirlas al localStorage para después poder filtrar por fechas, por artículo, etc.
 const ventasDiarias = JSON.parse(localStorage.getItem("arrayVentas")) || []
 const guardarVentasLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
 
@@ -139,7 +139,7 @@ function registrarVenta(venta) {
 let contador = 0;
 const crearFormVta = () => {
 	$("#btn_abrir_formVta").click(() => {
-		$(".formParaVenta").slideToggle(600);
+		$(".formParaVenta").slideToggle(800);
 
 		contador++
 		if (contador % 2 != 0) {
@@ -179,18 +179,31 @@ function registrarConsulta(consultaArt) {
 	if (existencias.some(item => (item.articulo == consultaArt.articulo) || (item.nombre == consultaArt.nombreArt))) {
 		existencias.forEach(item => {
 			if ((item.articulo == consultaArt.articulo) || (item.nombre == consultaArt.nombreArt)) {
-				alert(`El artículo ${item.nombre}, código ${item.articulo}, se encuentra en el almacen ${item.almacen} y hay disponibles ${item.unidades} unidades. Precio: $${item.precioVenta}`);
-			} else {
-				alert(`El artículo consultado no existe`);
+				$("#divInfo").prepend(`<div id="pInfo" class="col-md-6 text-center alert alert-success" role="alert">
+										<p>El artículo ${item.nombre}, código ${item.articulo}, se encuentra en el almacen ${item.almacen} y hay disponibles ${item.unidades} unidades. Precio: $${item.precioVenta}</p>
+										<button id="btnA" class="btn btn-primary btn-block">Cerrar</button>
+										</div>`);
+				$("#btnA").click(() => {
+					$("#pInfo").fadeOut(800);
+				});
 			}
 		})
+	} else {
+		$("#divInfo").prepend(`<div id="pAlert" class="col-md-6 text-center alert alert-danger" role="alert">
+								<p>El artículo consultado no existe</p>
+								<button type="button" class="btn btn-primary btn-block" id="btnA" >Cerrar</button>
+								</div>`);
+		$("#btnA").click(() => {
+			$("#pAlert").fadeOut(800);
+		});
 	}
-}
+};
+
 
 //Jquery a partir del after de Fran, para desplegar el formulario de info
 const crearFormInfo = () => {
 	$("#btn_abrir_form").click(() => {
-		$(".formInfoArt").slideToggle(600);
+		$(".formInfoArt").slideToggle(800);
 
 		contador++
 		if (contador % 2 != 0) {
@@ -219,14 +232,6 @@ function ordenarMenorAMayor() {
 
 ordenarMenorAMayor();
 */
-
-
-
-
-
-
-
-
 
 
 
