@@ -1,12 +1,22 @@
 export class Prenda {
-    constructor(articulo, nombre, tipoPrenda, almacen, unidades, precioCompra, precioVenta) {
+    constructor(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta) {
+        this.unidades = Number(unidades);
         this.articulo = articulo;
         this.nombre = nombre.toUpperCase();
         this.tipoPrenda = tipoPrenda.toUpperCase();
         this.almacen = almacen;
-        this.unidades = Number(unidades);
         this.precioCompra = Number(precioCompra);
         this.precioVenta = Number(precioVenta);
+        this.total = Number(this.unidades * this.precioCompra);
+    }
+};
+
+export class FacturaCompra {
+    constructor(proveedor, numeroFact, fecha, detalle) {
+        this.proveedor = proveedor.toUpperCase();
+        this.numeroFact = Number(numeroFact);
+        this.fecha = fecha;
+        this.detalle = detalle;
     }
 };
 

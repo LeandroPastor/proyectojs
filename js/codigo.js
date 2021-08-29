@@ -1,34 +1,82 @@
 import { Prenda } from "./Constructor.js"
 import { PrendaVendida } from "./Constructor.js"
 import { InfoArticulo } from "./Constructor.js"
-
-//Tomando datos por evento submit del form de compras (el que se utiliza para ingresar la mercadería)
-let miFormularioCompras = document.getElementById("formCompras");
-if (miFormularioCompras) {
-	miFormularioCompras.addEventListener("submit", validarFormularioCompras);
-};
-
-function validarFormularioCompras(e) {
-
-	e.preventDefault();
-
-	const articulo = document.getElementById("artIngresado").value,
-		nombre = document.getElementById("nombreArt").value,
-		tipoPrenda = document.getElementById("prend").value,
-		almacen = document.getElementById("almacen").value,
-		unidades = document.getElementById("cantidad").value,
-		precioCompra = document.getElementById("costo").value,
-		precioVenta = document.getElementById("precioVta").value;
+import { FacturaCompra } from "./Constructor.js"
 
 
-	const prenda = new Prenda(articulo, nombre, tipoPrenda, almacen, unidades, precioCompra, precioVenta);
 
-	agregar(prenda);
 
-};
+$(document).ready(function () {
+
+	const armarTabla = () => {
+		$("#tableCompra").empty();
+		existenciasTabla.forEach((detalle) => {
+			let fila = `<tr>
+					<td>${detalle.unidades}</td>
+					<td>${detalle.articulo}</td>
+					<td>${detalle.nombre}</td>
+					<td>${detalle.tipoPrenda}</td>
+					<td>${detalle.almacen}</td>
+					<td>${detalle.precioCompra}</td>
+					<td>${detalle.precioVenta}</td>
+					<td>${detalle.total}</td>
+					<td><button type="submit" class="btn btn-danger" id="inputEliminarDetalle">Eliminar</button></td>
+					</tr>`;
+			$("#tableCompra").append(fila);
+		});
+	};
+
+
+	$("#formCompraDetalle").on("submit", function (e) {
+		e.preventDefault();
+
+		const unidades = $("#inputCantidad").val(),
+			articulo = $("#inputCodArticulo").val(),
+			nombre = $("#inputNomArticulo").val(),
+			tipoPrenda = $("#inputPrenda").val(),
+			almacen = $("#inputAlmacen").val(),
+			precioCompra = $("#inputPCosto").val(),
+			precioVenta = $("#inputPVenta").val();
+
+		const prenda = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
+
+		const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
+		existenciasTabla.push(prendaTabla);
+
+		armarTabla();
+		agregar(prenda);
+		$("#formCompraDetalle")[0].reset();
+	});
+
+
+	$("#botonGuardarFactura").on("click", function (e) {
+		e.preventDefault();
+
+		const proveedor = $("#inputProveedor").val(),
+			numeroFact = $("#inputNumFactura").val(),
+			fecha = $("#inputFecha").val(),
+			detalle = [existenciasTabla];
+
+		const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle);
+		facturasCompra.push(factCompra);
+
+		$("#formDatosCompra")[0].reset();
+		$("#formCompraDetalle")[0].reset();
+
+
+		localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
+		$("#tablaCompra tr:gt(0)").remove();
+
+	});
+
+
+});
+
 
 //Array declarado como constante. Se inicializa con datos del localSotrage "o" se inicializa vacío. Según el caso
 const existencias = JSON.parse(localStorage.getItem("arrayExistencias")) || [];
+const existenciasTabla = [];
+const facturasCompra = [];
 
 //Función para subir al localStorage lo que se genera en la función que sigue (en la que ingresa la mercadería).
 const guardarLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
@@ -51,6 +99,21 @@ function agregar(prenda) {
 
 	guardarLocal("arrayExistencias", JSON.stringify(existencias));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //CÓDIGO PARA HTML VENTAS
