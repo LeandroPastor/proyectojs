@@ -8,25 +8,6 @@ import { FacturaCompra } from "./Constructor.js"
 
 $(document).ready(function () {
 
-	const armarTabla = () => {
-		$("#tableCompra").empty();
-		existenciasTabla.forEach((detalle) => {
-			let fila = `<tr>
-					<td>${detalle.unidades}</td>
-					<td>${detalle.articulo}</td>
-					<td>${detalle.nombre}</td>
-					<td>${detalle.tipoPrenda}</td>
-					<td>${detalle.almacen}</td>
-					<td>${detalle.precioCompra}</td>
-					<td>${detalle.precioVenta}</td>
-					<td>${detalle.total}</td>
-					<td><button type="submit" class="btn btn-danger" id="inputEliminarDetalle">Eliminar</button></td>
-					</tr>`;
-			$("#tableCompra").append(fila);
-		});
-	};
-
-
 	$("#formCompraDetalle").on("submit", function (e) {
 		e.preventDefault();
 
@@ -41,13 +22,38 @@ $(document).ready(function () {
 		const prenda = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
 
 		const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
+
 		existenciasTabla.push(prendaTabla);
+
 
 		armarTabla();
 		agregar(prenda);
+
 		$("#formCompraDetalle")[0].reset();
+
+
 	});
 
+	const armarTabla = () => {
+		$("#tableCompra").empty();
+
+		existenciasTabla.forEach((detalle) => {
+			let fila = `<tr>
+					<td>${detalle.unidades}</td>
+					<td>${detalle.articulo}</td>
+					<td>${detalle.nombre}</td>
+					<td>${detalle.tipoPrenda}</td>
+					<td>${detalle.almacen}</td>
+					<td>${detalle.precioCompra}</td>
+					<td>${detalle.precioVenta}</td>
+					<td>${detalle.total}</td>
+					<td><button type="submit" class="btn btn-danger" id="inputEliminarDetalle">Eliminar</button></td>
+					</tr>`;
+			$("#tableCompra").append(fila);
+		});
+
+
+	};
 
 	$("#botonGuardarFactura").on("click", function (e) {
 		e.preventDefault();
@@ -55,7 +61,7 @@ $(document).ready(function () {
 		const proveedor = $("#inputProveedor").val(),
 			numeroFact = $("#inputNumFactura").val(),
 			fecha = $("#inputFecha").val(),
-			detalle = [existenciasTabla];
+			detalle = existenciasTabla;
 
 		const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle);
 		facturasCompra.push(factCompra);
@@ -63,11 +69,15 @@ $(document).ready(function () {
 		$("#formDatosCompra")[0].reset();
 		$("#formCompraDetalle")[0].reset();
 
-
 		localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
+
 		$("#tablaCompra tr:gt(0)").remove();
 
 	});
+
+
+
+
 
 
 });
