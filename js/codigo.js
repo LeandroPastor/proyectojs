@@ -8,6 +8,8 @@ import { FacturaCompra } from "./Constructor.js"
 
 $(document).ready(function () {
 
+
+
 	$("#formCompraDetalle").on("submit", function (e) {
 		e.preventDefault();
 
@@ -23,8 +25,8 @@ $(document).ready(function () {
 
 		const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
 
-		existenciasTabla.push(prendaTabla);
 
+		existenciasTabla.push(prendaTabla);
 
 		armarTabla();
 		agregar(prenda);
@@ -34,26 +36,56 @@ $(document).ready(function () {
 
 	});
 
-	const armarTabla = () => {
+
+	function armarTabla() {
 		$("#tableCompra").empty();
 
-		existenciasTabla.forEach((detalle) => {
-			let fila = `<tr>
-					<td>${detalle.unidades}</td>
-					<td>${detalle.articulo}</td>
-					<td>${detalle.nombre}</td>
-					<td>${detalle.tipoPrenda}</td>
-					<td>${detalle.almacen}</td>
-					<td>${detalle.precioCompra}</td>
-					<td>${detalle.precioVenta}</td>
-					<td>${detalle.total}</td>
-					<td><button type="submit" class="btn btn-danger" id="inputEliminarDetalle">Eliminar</button></td>
-					</tr>`;
-			$("#tableCompra").append(fila);
+		existenciasTabla.forEach(function (detalle, indice) {
+
+
+			$("#tableCompra").append(`<tr id="trId${indice}">
+									<td>${detalle.unidades}</td>
+									<td>${detalle.articulo}</td>
+									<td>${detalle.nombre}</td>
+									<td>${detalle.tipoPrenda}</td>
+									<td>${detalle.almacen}</td>
+									<td>${detalle.precioCompra}</td>
+									<td>${detalle.precioVenta}</td>
+									<td>${detalle.total}</td>
+									<td><input type="button" class="borrar btn btn-danger" value="Eliminar" /></td>
+									</tr>`);
+
 		});
-
-
 	};
+
+	$(function () {
+		$("#tableCompra").on("click", ".borrar", function (event) {
+			event.preventDefault();
+
+			let datoArticulo = $(this).closest("tr").children()[1].textContent;
+			let datoCantidad = $(this).closest("tr").children()[0].textContent;
+			let datoPrecio = $(this).closest("tr").children()[5].textContent;
+
+			if (existenciasTabla.some(item => item.articulo == datoArticulo)) {
+				existenciasTabla = existenciasTabla.filter(item => item.articulo != datoArticulo);
+			}
+			$(this).closest('tr').remove();
+
+			if (existencias.some(item => item.articulo == datoArticulo)) {
+				existencias.forEach(item => {
+					if (item.articulo == datoArticulo && item.unidades > datoCantidad) {
+						item.precioCompra = ((item.unidades * item.precioCompra) - (datoCantidad * datoPrecio)) / (item.unidades - datoCantidad);
+						item.precioCompra = Number(item.precioCompra.toFixed(2));
+						item.unidades = item.unidades - datoCantidad;
+					} else if (item.articulo == datoArticulo && item.unidades == datoCantidad) {
+						existencias = existencias.filter(item => item.articulo != datoArticulo);
+					}
+				})
+			}
+			guardarLocal("arrayExistencias", JSON.stringify(existencias));
+		});
+	});
+
 
 	$("#botonGuardarFactura").on("click", function (e) {
 		e.preventDefault();
@@ -72,8 +104,39 @@ $(document).ready(function () {
 		localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
 
 		$("#tablaCompra tr:gt(0)").remove();
+		function empty() {
+			existenciasTabla = [];
+		}
+		empty();
 
 	});
+
+	$("#inputCodArticulo").change(function (e) {
+		const codigo = $("#inputCodArticulo").val();
+		if (existencias.some(item => item.articulo == codigo)) {
+			existencias.forEach(item => {
+				if (item.articulo == codigo) {
+					$("#inputNomArticulo").val(item.nombre);
+					$("#inputPrenda").val(item.tipoPrenda);
+					$("#inputAlmacen").val(item.almacen);
+					$("#inputPCosto").val(item.precioCompra);
+					$("#inputPVenta").val(item.precioVenta);
+				}
+			})
+		} else {
+			$("#inputNomArticulo").attr("placeholder", "ej: Viena");
+			$("#inputPrenda").attr("placeholder", "Ej: Remera");
+			$("#inputAlmacen").attr("placeholder", "Ej: 1");
+			$("#inputPCosto").attr("placeholder", "Ej: 550");
+			$("#inputPVenta").attr("placeholder", "Ej: 1100");
+		}
+	});
+
+
+
+
+
+
 
 
 
@@ -83,11 +146,11 @@ $(document).ready(function () {
 });
 
 
-//Array declarado como constante. Se inicializa con datos del localSotrage "o" se inicializa vacío. Según el caso
-const existencias = JSON.parse(localStorage.getItem("arrayExistencias")) || [];
-const existenciasTabla = [];
-const facturasCompra = [];
 
+//Array declarado como constante. Se inicializa con datos del localSotrage "o" se inicializa vacío. Según el caso
+let existencias = JSON.parse(localStorage.getItem("arrayExistencias")) || [];
+const facturasCompra = JSON.parse(localStorage.getItem("facturasDeCompra")) || [];
+let existenciasTabla = [];
 //Función para subir al localStorage lo que se genera en la función que sigue (en la que ingresa la mercadería).
 const guardarLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
 
@@ -100,13 +163,13 @@ function agregar(prenda) {
 			if (prenda.articulo == item.articulo) {
 				item.unidades = prenda.unidades + item.unidades;
 				item.precioCompra = (((item.unidades - prenda.unidades) * item.precioCompra) + (prenda.unidades * prenda.precioCompra)) / item.unidades;
-				item.precioCompra = item.precioCompra.toFixed(2);
+				item.precioCompra = Number(item.precioCompra.toFixed(2));
+				item.precioVenta = prenda.precioVenta;
 			}
 		})
 	} else {
 		existencias.push(prenda);
 	}
-
 	guardarLocal("arrayExistencias", JSON.stringify(existencias));
 }
 
@@ -305,8 +368,23 @@ function ordenarMenorAMayor() {
 
 ordenarMenorAMayor();
 */
-
-
+/*
+$(document).ready(function () {
+	function subirImagenes() {
+		var Form = new FormData($("#subirImagenes")[0]);
+		$.ajax({
+			url: "action_subir_imagenes_productos.php",
+			type: "post",
+			data: Form,
+			processData: false,
+			contentType: false,
+			success: function(data){
+				alert("Archivos agregados")
+			}
+		})
+	}
+});
+*/
 
 
 

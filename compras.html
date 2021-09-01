@@ -48,7 +48,7 @@
 		<h1 class="text-center mt-2">Gestión Compras / Proveedores</h1>
 
 		<section class="row mt-2">
-			<div class="col">
+			<div class="col center-block">
 				<div class="card">
 					<div class="card-header">
 						<h3 class="card-title">Cabecera Factura</h3>
@@ -81,11 +81,12 @@
 						<form class="row" id="formCompraDetalle">
 							<div class="form-group col-md-1">
 								<label for="">Cantidad:</label>
-								<input type="number" class="form-control" id="inputCantidad" />
+								<input type="number" class="form-control" id="inputCantidad" placeholder="ej: 10" />
 							</div>
 							<div class="form-group col-md-2">
 								<label for="">Cod. Artículo:</label>
-								<input type="text" class="form-control" id="inputCodArticulo" />
+								<input type="text" class="form-control" id="inputCodArticulo"
+									placeholder="ej: 01-1001" />
 							</div>
 							<div class="form-group col-md-3">
 								<label for="">Nombre Artículo:</label>
@@ -101,11 +102,11 @@
 							</div>
 							<div class="form-group col-md-1">
 								<label for="">P.Costo:</label>
-								<input type="number" class="form-control" id="inputPCosto" />
+								<input type="number" step="0.01" class="form-control" id="inputPCosto" />
 							</div>
 							<div class="form-group col-md-1">
 								<label for="">P.Venta:</label>
-								<input type="number" class="form-control" id="inputPVenta" />
+								<input type="number" step="0.01" class="form-control" id="inputPVenta" />
 							</div>
 							<div class="form-group col-md-1">
 								<button type="submit" class="btn btn-secondary" id="inputAgregar">Agregar</button>
