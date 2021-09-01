@@ -12,28 +12,30 @@ $(document).ready(function () {
 
 	$("#formCompraDetalle").on("submit", function (e) {
 		e.preventDefault();
+		if ($("#inputCantidad").val() != "" && $("#inputCodArticulo").val() != "" && $("#inputNomArticulo").val() != "" && $("#inputPrenda").val() != "" && $("#inputAlmacen").val() != "" && $("#inputPCosto").val() != "" && $("#inputPVenta").val() != "") {
+			const unidades = $("#inputCantidad").val(),
+				articulo = $("#inputCodArticulo").val(),
+				nombre = $("#inputNomArticulo").val(),
+				tipoPrenda = $("#inputPrenda").val(),
+				almacen = $("#inputAlmacen").val(),
+				precioCompra = $("#inputPCosto").val(),
+				precioVenta = $("#inputPVenta").val();
 
-		const unidades = $("#inputCantidad").val(),
-			articulo = $("#inputCodArticulo").val(),
-			nombre = $("#inputNomArticulo").val(),
-			tipoPrenda = $("#inputPrenda").val(),
-			almacen = $("#inputAlmacen").val(),
-			precioCompra = $("#inputPCosto").val(),
-			precioVenta = $("#inputPVenta").val();
+			const prenda = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
 
-		const prenda = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
-
-		const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
-
-
-		existenciasTabla.push(prendaTabla);
-
-		armarTabla();
-		agregar(prenda);
-
-		$("#formCompraDetalle")[0].reset();
+			const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
 
 
+			existenciasTabla.push(prendaTabla);
+
+
+			armarTabla();
+			agregar(prenda);
+
+			$("#formCompraDetalle")[0].reset();
+		} else {
+			alert("debe completar todos los campos!!")//Acá falta generar evento en el DOM
+		}
 	});
 
 
@@ -41,8 +43,6 @@ $(document).ready(function () {
 		$("#tableCompra").empty();
 
 		existenciasTabla.forEach(function (detalle, indice) {
-
-
 			$("#tableCompra").append(`<tr id="trId${indice}">
 									<td>${detalle.unidades}</td>
 									<td>${detalle.articulo}</td>
@@ -87,29 +87,37 @@ $(document).ready(function () {
 	});
 
 
+
 	$("#botonGuardarFactura").on("click", function (e) {
 		e.preventDefault();
 
-		const proveedor = $("#inputProveedor").val(),
-			numeroFact = $("#inputNumFactura").val(),
-			fecha = $("#inputFecha").val(),
-			detalle = existenciasTabla;
+		if ($("#inputProveedor").val() != "" && $("#inputNumFactura").val() != "" && $("#inputFecha").val() != "" && existenciasTabla != "") {
+			const proveedor = $("#inputProveedor").val(),
+				numeroFact = $("#inputNumFactura").val(),
+				fecha = $("#inputFecha").val(),
+				detalle = existenciasTabla;
 
-		const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle);
-		facturasCompra.push(factCompra);
+			const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle);
+			facturasCompra.push(factCompra);
 
-		$("#formDatosCompra")[0].reset();
-		$("#formCompraDetalle")[0].reset();
+			$("#formDatosCompra")[0].reset();
+			$("#formCompraDetalle")[0].reset();
 
-		localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
+			localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
 
-		$("#tablaCompra tr:gt(0)").remove();
-		function empty() {
-			existenciasTabla = [];
+			$("#tablaCompra tr:gt(0)").remove();
+			function vaciar() {
+				existenciasTabla = [];
+			}
+			vaciar();
+		} else {
+			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
 		}
-		empty();
+
 
 	});
+
+
 
 	$("#inputCodArticulo").change(function (e) {
 		const codigo = $("#inputCodArticulo").val();
