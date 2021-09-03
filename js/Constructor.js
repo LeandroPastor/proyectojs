@@ -12,23 +12,35 @@ export class Prenda {
 };
 
 export class FacturaCompra {
-    constructor(proveedor, numeroFact, fecha, detalle) {
+    constructor(proveedor, numeroFact, fecha, detalle, totalCompra) {
         this.proveedor = proveedor.toUpperCase();
         this.numeroFact = Number(numeroFact);
         this.fecha = fecha;
         this.detalle = detalle;
+        this.totalCompra = totalCompra;
     }
 };
 
 export class PrendaVendida {
-    constructor(fechaVta, articulo, cantidad, formaPago, totalVta) {
-        this.fechaVta = fechaVta;
+    constructor(cantidad, articulo, nombre, pUnit) {
+        this.cantidad = Number(cantidad);
         this.articulo = articulo;
-        this.cantidad = cantidad;
-        this.formaPago = formaPago;
-        this.totalVta = totalVta;
+        this.nombre = nombre.toUpperCase();
+        this.pUnit = Number(pUnit);
+        this.total = Number(this.cantidad * this.pUnit);
     }
 };
+
+export class FacturaVenta {
+    constructor(id, cliente, ticket, fecha, detalleVta, total) {
+        this.id = Number(id);
+        this.cliente = cliente.toUpperCase();
+        this.ticket = Number(ticket);
+        this.fecha = fecha;
+        this.detalleVta = detalleVta;
+        this.total = total;
+    }
+}
 
 export class InfoArticulo {
     constructor(articulo, nombreArt) {

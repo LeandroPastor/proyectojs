@@ -30,3 +30,9 @@
     padding: 20px;
     margin: 20px;
 }
+
+
+#formFactVta{
+    display: none;
+    padding-left: 20px;
+}

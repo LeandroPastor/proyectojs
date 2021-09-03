@@ -11,7 +11,7 @@
 		integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous" />
 </head>
 
-<body>
+<body class="bg-light bg-gradient container-fluid">
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<div class="container-fluid">
@@ -44,72 +44,177 @@
 			</div>
 		</nav>
 	</header>
-	<main class="container">
-		<div id="divVenta">
-			<div class="botonVta">
-				<button type="button" class="btn btn-primary" id="btn_abrir_formVta">Venta</button>
-			</div>
+	<main>
 
-			<div class="col-md-5 formParaVenta">
-				<div id="divFormVta" class="card">
-					<div class="card-header">
-						<h4>Cargar venta</h4>
-					</div>
-					<form id="formVenta" class="card-body">
-						<div class="form-group">
-							<input type="date" id="fechaVta" class="form-control">
+		<h1 class="text-center mt-2">Gestión Ventas</h1>
+
+
+		<div class="row col-md-6 mx-auto">
+			<button type="button" class="btn btn-primary mt-2 col-md-3" id="btn_abrir_formVta">Venta</button>
+			<div class="col-md-1"></div>
+			<button type="button" class="btn btn-primary mt-2 col-md-3" id="btn_abrir_form">Información
+				Artículo</button>
+			<div class="col-md-1"></div>
+			<button type="button" class="btn btn-primary mt-2 col-md-3" id="btn_abrir_form">Información
+				Artículo</button>
+		</div>
+
+
+
+		<div class="col-md-12">
+			<div id="formFactVta" class="col-md-12">
+				<section class="row mt-2 col-md-7">
+					<div class="col">
+						<div class="card">
+							<div class="card-header">
+								<h3 class="card-title">Cabecera Factura Venta</h3>
+							</div>
+							<div class="card-body">
+								<form class="row" id="formDatosVta">
+									<div class="form-group col-md-2">
+										<label for="">Nº Cliente:</label>
+										<input type="number" class="form-control" placeholder="ej: 1"
+											id="inputNumCliente" />
+									</div>
+									<div class="form-group col-md-5">
+										<label for="">Cliente:</label>
+										<input type="text" class="form-control" placeholder="Apellido y nombre"
+											id="inputNomCliente" />
+									</div>
+									<div class="form-group col-md-2">
+										<label for="">Nº ticket:</label>
+										<input type="number" class="form-control" placeholder="ej: 101"
+											id="inputNumTicket" />
+									</div>
+									<div class="form-group col-md-3">
+										<label for="">Fecha:</label>
+										<input type="date" class="form-control" id="inputFechaVta" />
+									</div>
+								</form>
+							</div>
 						</div>
-						<div id="agregando">
+					</div>
+				</section>
+				<section class="row mt-2 col-md-7">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<form class="row" id="formVtaDetalle">
+									<div class="form-group col-md-2">
+										<label for="">Cantidad:</label>
+										<input type="number" class="form-control" id="inputCantVta"
+											placeholder="ej: 10" />
+									</div>
+									<div class="form-group col-md-3">
+										<label for="">Cod. Artículo:</label>
+										<input type="text" class="form-control" id="inputCodArtVta" />
+									</div>
+									<div class="form-group col-md-3">
+										<label for="">Nombre Artículo:</label>
+										<input type="text" class="form-control" id="inputNomArtVta" />
+									</div>
+									<div class="form-group col-md-2">
+										<label for="">Precio Unit:</label>
+										<input type="number" step="0.01" class="form-control" id="inputPVta" />
+									</div>
+									<div class="form-group col-md-1">
+										<button type="submit" class="btn btn-secondary"
+											id="inputVtaAgregar">Agregar</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col mt-2">
+						<button type="submit" class="btn btn-secondary" id="botGuardarFactVta">Guardar Info
+							Vta</button>
+					</div>
+				</section>
+				<section class="row mt-3 col-md-7">
+					<div class="col">
+
+						<table id="tablaVenta" class="table text-center">
+							<thead>
+								<tr>
+									<th>Cantidad</th>
+									<th>Cod.Artículo</th>
+									<th>Nombre Artículo</th>
+									<th>P.Venta</th>
+									<th>Total</th>
+									<th>Accion</th>
+								</tr>
+							</thead>
+							<tbody id="tableVenta">
+							</tbody>
+						</table>
+
+
+					</div>
+				</section>
+			</div>
+			<div id="divInfo" class="col-md-11 d-flex justify-content-center">
+				<div class="col-md-3 formInfoArt">
+					<div class="card">
+						<div class="card-header">
+							<h5>Información artículo</h5>
+						</div>
+						<form id="formInfo" class="card-body">
 							<div class="form-group">
-								<input type="text" id="artVend" placeholder="Artículo" class="form-control">
+								<input type="text" id="artInfo" placeholder="Artículo" class="form-control">
 							</div>
 							<div class="form-group">
-								<input type="number" id="cantVend" step="0.01" placeholder="Cantidad vendida"
+								<input type="text" id="nombreInfo" step="0.01" placeholder="Nombre artículo"
 									class="form-control">
 							</div>
-						</div>
-						<div>
-							<input class="form-check-input" type="radio" name="formaDePago" value="EF" />efectivo
-							<input class="form-check-input" type="radio" name="formaDePago" value="TJ" />tarjeta de
-							crédito
-							<input class="form-check-input" type="radio" name="formaDePago" value="CP" />cuenta
-							personal
-						</div>
+							<input type="submit" value="Solicitar Info" class="btn btn-primary btn-block" />
+							<input type="reset" value="Borrar" class="btn btn-primary btn-block" />
 
-						<button id="btnAgregar" class="btn btn-primary btn-block">Agregar Artículo</button>
-						<input type="reset" value="Borrar Datos" class="btn btn-primary btn-block" />
-						<input type="submit" value="Finalizar Venta" class="btn btn-primary btn-block" />
-
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div id="divInfo">
-			<div class="botonInfo">
-				<button type="button" class="btn btn-primary" id="btn_abrir_form">Información Artículo</button>
-			</div>
 
-			<div class="col-md-3 formInfoArt">
-				<div class="card">
-					<div class="card-header">
-						<h5>Información artículo</h5>
+
+
+
+		<!--  seccion vieja para vtas, guardo por tema botones forma de pago!!! 
+		<div class="col-md-5 formParaVenta">
+			<div id="divFormVta" class="card">
+				<div class="card-header">
+					<h4>Cargar venta</h4>
+				</div>
+				<form id="formVenta" class="card-body">
+					<div class="form-group">
+						<input type="date" id="fechaVta" class="form-control">
 					</div>
-					<form id="formInfo" class="card-body">
+					<div id="agregando">
 						<div class="form-group">
-							<input type="text" id="artInfo" placeholder="Artículo" class="form-control">
+							<input type="text" id="artVend" placeholder="Artículo" class="form-control">
 						</div>
 						<div class="form-group">
-							<input type="text" id="nombreInfo" step="0.01" placeholder="Nombre artículo"
+							<input type="number" id="cantVend" step="0.01" placeholder="Cantidad vendida"
 								class="form-control">
 						</div>
-						<input type="submit" value="Solicitar Info" class="btn btn-primary btn-block" />
-						<input type="reset" value="Borrar" class="btn btn-primary btn-block" />
+					</div>
+					<div>
+						<input class="form-check-input" type="radio" name="formaDePago" value="EF" />efectivo
+						<input class="form-check-input" type="radio" name="formaDePago" value="TJ" />tarjeta de
+						crédito
+						<input class="form-check-input" type="radio" name="formaDePago" value="CP" />cuenta
+						personal
+					</div>
 
-					</form>
-				</div>
+					<button id="btnAgregar" class="btn btn-primary btn-block">Agregar Artículo</button>
+					<input type="reset" value="Borrar Datos" class="btn btn-primary btn-block" />
+					<input type="submit" value="Finalizar Venta" class="btn btn-primary btn-block" />
+
+				</form>
 			</div>
 		</div>
+		-->
+
 
 	</main>
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

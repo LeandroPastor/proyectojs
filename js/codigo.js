@@ -2,6 +2,7 @@ import { Prenda } from "./Constructor.js"
 import { PrendaVendida } from "./Constructor.js"
 import { InfoArticulo } from "./Constructor.js"
 import { FacturaCompra } from "./Constructor.js"
+import { FacturaVenta } from "./Constructor.js"
 
 
 
@@ -9,7 +10,8 @@ import { FacturaCompra } from "./Constructor.js"
 $(document).ready(function () {
 
 
-
+	//Función que toma valores del DOM para instanciar objetos que se pushean a dos arrays distintos, el de existencias y el de existencias para info
+	//de factura de compra
 	$("#formCompraDetalle").on("submit", function (e) {
 		e.preventDefault();
 		if ($("#inputCantidad").val() != "" && $("#inputCodArticulo").val() != "" && $("#inputNomArticulo").val() != "" && $("#inputPrenda").val() != "" && $("#inputAlmacen").val() != "" && $("#inputPCosto").val() != "" && $("#inputPVenta").val() != "") {
@@ -25,9 +27,7 @@ $(document).ready(function () {
 
 			const prendaTabla = new Prenda(unidades, articulo, nombre, tipoPrenda, almacen, precioCompra, precioVenta);
 
-
 			existenciasTabla.push(prendaTabla);
-
 
 			armarTabla();
 			agregar(prenda);
@@ -38,7 +38,24 @@ $(document).ready(function () {
 		}
 	});
 
+	//funcion que genera stock de mercadería en base a factura de compra
+	function agregar(prenda) {
+		if (existencias.some(item => item.articulo == prenda.articulo)) {
+			existencias.forEach(item => {
+				if (prenda.articulo == item.articulo) {
+					item.unidades = prenda.unidades + item.unidades;
+					item.precioCompra = (((item.unidades - prenda.unidades) * item.precioCompra) + (prenda.unidades * prenda.precioCompra)) / item.unidades;
+					item.precioCompra = Number(item.precioCompra.toFixed(2));
+					item.precioVenta = prenda.precioVenta;
+				}
+			})
+		} else {
+			existencias.push(prenda);
+		}
+		guardarLocal("arrayExistencias", JSON.stringify(existencias));
+	}
 
+	//Función para pintar en factura de compra
 	function armarTabla() {
 		$("#tableCompra").empty();
 
@@ -58,9 +75,10 @@ $(document).ready(function () {
 		});
 	};
 
+	//Función para eliminar de lo pintado en DOM (en la factura antes de guardarla) que impacta en existencias(stock) 
 	$(function () {
-		$("#tableCompra").on("click", ".borrar", function (event) {
-			event.preventDefault();
+		$("#tableCompra").on("click", ".borrar", function (e) {
+			e.preventDefault();
 
 			let datoArticulo = $(this).closest("tr").children()[1].textContent;
 			let datoCantidad = $(this).closest("tr").children()[0].textContent;
@@ -69,6 +87,7 @@ $(document).ready(function () {
 			if (existenciasTabla.some(item => item.articulo == datoArticulo)) {
 				existenciasTabla = existenciasTabla.filter(item => item.articulo != datoArticulo);
 			}
+
 			$(this).closest('tr').remove();
 
 			if (existencias.some(item => item.articulo == datoArticulo)) {
@@ -86,10 +105,11 @@ $(document).ready(function () {
 		});
 	});
 
-
-
+	//funcion para guardar datos de factura de compra (inputs con datos proveedor y total y array de productos comprados)
 	$("#botonGuardarFactura").on("click", function (e) {
 		e.preventDefault();
+
+		let totalFactura = 0;//variable para calcular total de la factura de compra y alojar como elemento del objeto
 
 		if ($("#inputProveedor").val() != "" && $("#inputNumFactura").val() != "" && $("#inputFecha").val() != "" && existenciasTabla != "") {
 			const proveedor = $("#inputProveedor").val(),
@@ -97,7 +117,12 @@ $(document).ready(function () {
 				fecha = $("#inputFecha").val(),
 				detalle = existenciasTabla;
 
-			const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle);
+			existenciasTabla.forEach(item => {
+				totalFactura += item["total"];
+			})
+			const totalCompra = totalFactura;
+
+			const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle, totalCompra);
 			facturasCompra.push(factCompra);
 
 			$("#formDatosCompra")[0].reset();
@@ -110,15 +135,14 @@ $(document).ready(function () {
 				existenciasTabla = [];
 			}
 			vaciar();
+
 		} else {
 			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
 		}
-
-
 	});
 
 
-
+	//Función para autocompletar con info de existencias si existe y con placeholder cuando no existe el articulo
 	$("#inputCodArticulo").change(function (e) {
 		const codigo = $("#inputCodArticulo").val();
 		if (existencias.some(item => item.articulo == codigo)) {
@@ -141,115 +165,183 @@ $(document).ready(function () {
 	});
 
 
+	//Prueba para filtar por fecha y sacar totales de compra en base a ese parámetro, los mismo puede aplicarse a proveedor. Habría que ver como buscar
+	//según el artículo, en que factura tuvo movimiento (compra o venta)
+	let facturasDeCompraLStorage = JSON.parse(localStorage.getItem("facturasDeCompra"));
+	//console.log(facturasDeCompraLStorage);
 
 
+	const filtro1 = facturasDeCompraLStorage.filter(factura => factura.fecha >= "2021-09-01" && factura.fecha <= "2021-09-30")
+	//console.log(filtro1);
+	let comprasMes = 0;
+	filtro1.forEach(item => {
+		comprasMes += item["totalCompra"];
+	})
+	//console.log(comprasMes);
 
 
+	//------------------------------------------------------------------------------------
+	//Codigo para HTML Ventas!!!
+	//------------------------------------------------------------------------------------
 
 
+	$("#formVtaDetalle").on("submit", function (e) {
+		e.preventDefault();
+
+		if ($("#inputCantVta").val() != "" && $("#inputCodArtVta").val() != "" && $("#inputNomArtVta").val() != "" && $("#inputPVta").val() != "") {
+
+			const cantidad = $("#inputCantVta").val(),
+				articulo = $("#inputCodArtVta").val(),
+				nombre = $("#inputNomArtVta").val(),
+				pUnit = $("#inputPVta").val();
+
+			const venta = new PrendaVendida(cantidad, articulo, nombre, pUnit);
+
+			arrayTemporalVta.push(venta);
+
+			modificarExistencias(venta);
+			pintarTablaVta();
+
+			$("#formVtaDetalle")[0].reset();
+		} else {
+			alert("debe completar todos los campos!!")//Acá falta generar evento en el DOM
+		}
+	});
+
+	function modificarExistencias(venta) {
+		if (existencias.some(item => item.articulo == venta.articulo)) {
+			existencias.forEach(item => {
+				if (item.articulo == venta.articulo) {
+					if ((item.unidades - venta.cantidad) >= 0) {
+						item.unidades = item.unidades - venta.cantidad
+					} else {
+						alert("No hay stock, acá iría algo por DOM")
+					}
+				}
+			})
+		}
+		guardarLocal("arrayExistencias", JSON.stringify(existencias));
+	};
+
+	function pintarTablaVta() {
+		$("#tableVenta").empty();
+		arrayTemporalVta.forEach(function (detalle, indice) {
+			$("#tableVenta").append(`<tr id="trIdVta${indice}">
+									<td>${detalle.cantidad}</td>										
+									<td>${detalle.articulo}</td>
+									<td>${detalle.nombre}</td>
+									<td>${detalle.pUnit}</td>
+									<td>${detalle.total}</td>
+									<td><input type="button" class="borrarVta btn btn-danger" value="Eliminar" /></td>
+									</tr>`)
+		});
+	}
+
+	//captura de inputs para rellenar el resto automaticamente
+	$("#inputCodArtVta").change(function (e) {
+		const codigoV = $("#inputCodArtVta").val();
+		if (existencias.some(item => item.articulo == codigoV)) {
+			existencias.forEach(item => {
+				if (item.articulo == codigoV) {
+					$("#inputNomArtVta").val(item.nombre);
+					$("#inputPVta").val(item.precioVenta);
+				}
+			})
+		} else {
+			$("#inputNomArtVta").attr("placeholder", "ej: Viena");
+			$("#inputPVta").attr("placeholder", "ej: $1500");
+		}
+	});
+	//captura de inputs para rellenar el resto automaticamente
+	$("#inputNomArtVta").keyup(function (e) {
+		const nombreV = $("#inputNomArtVta").val().toUpperCase();
+
+		if (existencias.some(item => item.nombre == nombreV)) {
+			existencias.forEach(item => {
+				if (item.nombre == nombreV) {
+					$("#inputCodArtVta").val(item.articulo);
+					$("#inputPVta").val(item.precioVenta);
+				}
+			})
+		} else {
+			$("#inputCodArtVta").attr("placeholder", "ej: 01-1000");
+			$("#inputPVta").attr("placeholder", "ej: $1500");
+		}
+	});
+
+	$(function () {
+		$("#tableVenta").on("click", ".borrarVta", function (e) {
+			e.preventDefault();
+
+			let datoArticuloVta = $(this).closest("tr").children()[1].textContent;
+			let datoCantidadVta = Number($(this).closest("tr").children()[0].textContent);
 
 
+			if (arrayTemporalVta.some(item => item.articulo == datoArticuloVta)) {
+				arrayTemporalVta = arrayTemporalVta.filter(item => item.articulo != datoArticuloVta);
+			}
 
+			$(this).closest('tr').remove();
+
+			if (existencias.some(item => item.articulo == datoArticuloVta)) {
+				existencias.forEach(item => {
+					if (item.articulo == datoArticuloVta) {
+						item.unidades = item.unidades + datoCantidadVta;
+					};
+				})
+			}
+			guardarLocal("arrayExistencias", JSON.stringify(existencias));
+		});
+	});
+
+	$("#botGuardarFactVta").on("click", function (e) {
+		e.preventDefault();
+
+		let totalFacturaVta = 0;//variable para calcular total de la factura de Vta y alojar como elemento del objeto
+
+		if ($("#inputNumCliente").val() != "" && $("#inputNomCliente").val() != "" && $("#inputNumTicket").val() != "" && arrayTemporalVta != "" && $("#inputFechaVta").val() != "") {
+			const id = $("#inputNumCliente").val(),
+				cliente = $("#inputNomCliente").val(),
+				ticket = $("#inputNumTicket").val(),
+				fecha = $("#inputFechaVta").val(),
+				detalleVta = arrayTemporalVta;
+
+			arrayTemporalVta.forEach(item => {
+				totalFacturaVta += item["total"];
+			})
+			const total = totalFacturaVta;
+
+			const factVta = new FacturaVenta(id, cliente, ticket, fecha, detalleVta, total);
+			facturasVta.push(factVta);
+
+			$("#formDatosVta")[0].reset();
+			$("#formVtaDetalle")[0].reset();
+
+			localStorage.setItem("facturasDeVenta", JSON.stringify(facturasVta));
+
+			$("#tablaVenta tr:gt(0)").remove();
+			function vaciar() {
+				arrayTemporalVta = [];
+			}
+			vaciar();
+
+		} else {
+			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
+		}
+	});
 
 });
-
-
 
 //Array declarado como constante. Se inicializa con datos del localSotrage "o" se inicializa vacío. Según el caso
 let existencias = JSON.parse(localStorage.getItem("arrayExistencias")) || [];
 const facturasCompra = JSON.parse(localStorage.getItem("facturasDeCompra")) || [];
+const facturasVta = JSON.parse(localStorage.getItem("facturasDeVenta")) || [];
 let existenciasTabla = [];
+let arrayTemporalVta = [];
 //Función para subir al localStorage lo que se genera en la función que sigue (en la que ingresa la mercadería).
 const guardarLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
 
-//Función para agregar objetos al array existencias a partir del evento que se toma del html compras. Antes de agregar elementos con
-//push, primero, con el metodo some, evalua si algún objeto existe previamente y en ese caso lo modifica con forEach. Caso contrario,
-//con push, se agrega al array. Por último se sube al localStorage con el nombre de clave "arrayExistencias" 
-function agregar(prenda) {
-	if (existencias.some(item => item.articulo == prenda.articulo)) {
-		existencias.forEach(item => {
-			if (prenda.articulo == item.articulo) {
-				item.unidades = prenda.unidades + item.unidades;
-				item.precioCompra = (((item.unidades - prenda.unidades) * item.precioCompra) + (prenda.unidades * prenda.precioCompra)) / item.unidades;
-				item.precioCompra = Number(item.precioCompra.toFixed(2));
-				item.precioVenta = prenda.precioVenta;
-			}
-		})
-	} else {
-		existencias.push(prenda);
-	}
-	guardarLocal("arrayExistencias", JSON.stringify(existencias));
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//CÓDIGO PARA HTML VENTAS
-//En este bloque es donde está lo que me está trabando en este momento (hasta la linea 68)
-$("#btnAgregar").on("click", function (e) {
-	e.preventDefault();
-
-	$("#agregando").append(`<div class="form-group">
-								<input type="text" id="artVend" placeholder="Artículo" class="form-control">
-							</div>
-							<div class="form-group">
-								<input type="number" id="cantVend" step="0.01" placeholder="Cantidad vendida"
-									class="form-control">
-							</div>`);
-})
-
-
-//Tomando datos evento submit por form ventas
-let miFormularioVentas = document.getElementById("formVenta");
-
-if (miFormularioVentas) {
-	miFormularioVentas.addEventListener("submit", validarFormularioVentas);
-}
-
-function validarFormularioVentas(e) {
-
-	e.preventDefault();
-
-	const fechaVta = document.getElementById("fechaVta").value,
-		articulo = document.getElementById("artVend").value,
-		cantidad = document.getElementById("cantVend").value,
-		formaPago = $('input[name="formaDePago"]:checked').val(),
-		totalVta = 0;
-
-	const venta = new PrendaVendida(fechaVta, articulo, cantidad, formaPago, totalVta);
-
-	registrarVenta(venta);
-
-};
-
-//Array para registrar ventas y función para subirlas al localStorage para después poder filtrar por fechas, por artículo, etc.
-const ventasDiarias = JSON.parse(localStorage.getItem("arrayVentas")) || []
-const guardarVentasLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
-
-//Declaración e inicializacion de variable para usar en la función de registrar Venta
-let totalVenta = 0;
-//Función para pasar vtas. Toma los datos del form de ventas con los que se instancia el objeto que se pasa como parámetro. Evalua que el artículo 
-//exista (a partir del stock generado en compras) y por un lado modifica el stock del localstorage y crea otro array con datos de la vta para después
-//usarlo como datos para hacer informes diversos
-function registrarVenta(venta) {
-	if (existencias.some(item => item.articulo == venta.articulo)) {
-		existencias.forEach(item => {
-			if (venta.articulo == item.articulo) {
-				if ((item.unidades - venta.cantidad) >= 0) {
-					item.unidades = item.unidades - venta.cantidad;
+/*
 					if (venta.formaPago === "EF") {
 						totalVenta = (item.precioVenta * venta.cantidad) * 0.90;
 					} else {
@@ -277,13 +369,14 @@ function registrarVenta(venta) {
 			}
 		})
 	}
-	guardarLocal("arrayExistencias", JSON.stringify(existencias));
 }
+*/
+
 //Jquery a partir del after de Fran, para desplegar el formulario de ventas
 let contador = 0;
 const crearFormVta = () => {
 	$("#btn_abrir_formVta").click(() => {
-		$(".formParaVenta").slideToggle(800);
+		$("#formFactVta").slideToggle(900);
 
 		contador++
 		if (contador % 2 != 0) {
