@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "nombre": "Cliente",
+        "apellido": "Genérico",
+        "telefono": 1130927485,
+        "saldo": 1550
+    },
+    {
+        "id": 2,
+        "nombre": "Andrea",
+        "apellido": "Trinidad",
+        "telefono": 1130927484,
+        "saldo": 2300
+    },
+    {
+        "id": 3,
+        "nombre": "Melisa",
+        "apellido": "Rostan",
+        "telefono": 1130923485,
+        "saldo": 8550
+    },
+    {
+        "id": 4,
+        "nombre": "Natalia",
+        "apellido": "Fernandez",
+        "telefono": 1130227485,
+        "saldo": 550
+    },
+    {
+        "id": 5,
+        "nombre": "Johana",
+        "apellido": "Leguizamon",
+        "telefono": 1130927486,
+        "saldo": 6550
+    }
+]

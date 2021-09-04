@@ -49,6 +49,16 @@ export class InfoArticulo {
     }
 };
 
+export class Cliente {
+    constructor(id, nombre, apellido, telefono, saldo) {
+        this.id = Number(id);
+        this.nombre = nombre.toUpperCase();
+        this.apellido = apellido.toUpperCase();
+        this.telefono = Number(telefono);
+        this.saldo = Number(saldo);
+    }
+}
+
 /*
 class CajaDiaria {
     constructor(inicio, ventaEf, ventaTJ, ventaCP, gastosDiarios, gastosExtras, cierre) {

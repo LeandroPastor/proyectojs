@@ -3,6 +3,8 @@ import { PrendaVendida } from "./Constructor.js"
 import { InfoArticulo } from "./Constructor.js"
 import { FacturaCompra } from "./Constructor.js"
 import { FacturaVenta } from "./Constructor.js"
+import { Cliente } from "./Constructor.js"
+
 
 
 
@@ -167,10 +169,10 @@ $(document).ready(function () {
 
 	//Prueba para filtar por fecha y sacar totales de compra en base a ese parámetro, los mismo puede aplicarse a proveedor. Habría que ver como buscar
 	//según el artículo, en que factura tuvo movimiento (compra o venta)
-	let facturasDeCompraLStorage = JSON.parse(localStorage.getItem("facturasDeCompra"));
+	//let facturasDeCompraLStorage = JSON.parse(localStorage.getItem("facturasDeCompra"));
 	//console.log(facturasDeCompraLStorage);
 
-
+	/*
 	const filtro1 = facturasDeCompraLStorage.filter(factura => factura.fecha >= "2021-09-01" && factura.fecha <= "2021-09-30")
 	//console.log(filtro1);
 	let comprasMes = 0;
@@ -178,13 +180,14 @@ $(document).ready(function () {
 		comprasMes += item["totalCompra"];
 	})
 	//console.log(comprasMes);
+	*/
 
 
 	//------------------------------------------------------------------------------------
 	//Codigo para HTML Ventas!!!
 	//------------------------------------------------------------------------------------
 
-
+	//captura de inputs en seccion vta para instanciar objeto venta que se pushea a array temporal
 	$("#formVtaDetalle").on("submit", function (e) {
 		e.preventDefault();
 
@@ -208,6 +211,7 @@ $(document).ready(function () {
 		}
 	});
 
+	//Funcion que modifica el stock en el localStorage
 	function modificarExistencias(venta) {
 		if (existencias.some(item => item.articulo == venta.articulo)) {
 			existencias.forEach(item => {
@@ -223,6 +227,7 @@ $(document).ready(function () {
 		guardarLocal("arrayExistencias", JSON.stringify(existencias));
 	};
 
+	//Funcion para cargar más articulos en la factura de vta
 	function pintarTablaVta() {
 		$("#tableVenta").empty();
 		arrayTemporalVta.forEach(function (detalle, indice) {
@@ -269,6 +274,7 @@ $(document).ready(function () {
 		}
 	});
 
+	//Función para borrar carga de articulos vendidos
 	$(function () {
 		$("#tableVenta").on("click", ".borrarVta", function (e) {
 			e.preventDefault();
@@ -294,6 +300,7 @@ $(document).ready(function () {
 		});
 	});
 
+	//Función que genera array para localStorage y que resetea el array temporal de ventas
 	$("#botGuardarFactVta").on("click", function (e) {
 		e.preventDefault();
 
@@ -330,49 +337,113 @@ $(document).ready(function () {
 		}
 	});
 
+
+	//------------------------------------------------------------------------------------
+	//Codigo para HTML Clientes!!!
+	//------------------------------------------------------------------------------------
+
+	//Captura de inptus para generar objeto cliente que se pushea a array temporal
+	$("#formAltaCliente").on("submit", function (e) {
+		e.preventDefault();
+
+		if ($("#inputIdCliente").val() != "" && $("#inputNombreCliente").val() != "" && $("#inputApellidoCliente").val() != "" && $("#inputTelefono").val() != "") {
+
+			const id = $("#inputIdCliente").val(),
+				nombre = $("#inputNombreCliente").val(),
+				apellido = $("#inputApellidoCliente").val(),
+				telefono = $("#inputTelefono").val(),
+				saldo = 0;
+
+			const cliente = new Cliente(id, nombre, apellido, telefono, saldo);
+
+			arrayTemporalClientes.push(cliente);
+
+
+			pintarDatos();
+
+			$("#formAltaCliente")[0].reset();
+
+		} else {
+			alert("debe completar todos los campos!!")//Acá falta generar evento en el DOM
+		}
+	});
+
+	//Pintando tabla de clientes para luego enviar!!
+	function pintarDatos() {
+		$("#tableCliente").empty();
+		arrayTemporalClientes.forEach(function (detalle, indice) {
+			$("#tableCliente").append(`<tr id="trIdC${indice}">
+									<td>${detalle.id}</td>										
+									<td>${detalle.nombre}</td>
+									<td>${detalle.apellido}</td>
+									<td>${detalle.telefono}</td>
+									<td><input type="button" class="borrarCliente btn btn-danger" value="Eliminar" /></td>
+									</tr>`)
+		});
+	}
+
+	//Funcion para eliminar clientes antes de guardarlos
+	$(function () {
+		$("#tableCliente").on("click", ".borrarCliente", function (e) {
+			e.preventDefault();
+
+			let datoId = Number($(this).closest("tr").children()[0].textContent);
+			console.log(arrayTemporalClientes);
+			if (arrayTemporalClientes.some(item => item.id == datoId)) {
+				arrayTemporalClientes = arrayTemporalClientes.filter(item => item.id != datoId);
+			}
+
+			$(this).closest('tr').remove();
+			console.log(arrayTemporalClientes);
+		});
+	});
+
+
+	//Desafío Ajax!!!
+	//Se simula ingreso de clientes a base de datos
+	const URL = "https://jsonplaceholder.typicode.com/posts";
+	const infoAlta = arrayTemporalClientes;
+	$("#btnGuardarJsonCliente").click(() => {
+		$.ajax({
+			method: "POST",
+			url: URL,
+			data: infoAlta,
+			success: function () {
+				$("#alta").append(`<p>La clienta ${infoAlta[0].nombre} ${infoAlta[0].apellido} se ingresó a la base de datos exitosamente</p>`)
+			}
+		})
+	});
+	//Se imprime listado de clientes en base a un Json
+	const URLJ = "data/datosClientes.json"
+	$("#btn_Info_clientes").click(() => {
+		$.getJSON(URLJ, function (respuesta, estado) {
+			if (estado === "success") {
+				let datos = respuesta;
+				for (const dato of datos) {
+					$("#mostrarDatos").append(`<div>
+												<h4>Cliente: ${dato.nombre} ${dato.apellido}</h4>
+												<p>Número de cliente: ${dato.id}</P>
+												<p>Saldo en cuenta: $${dato.saldo}</p>
+												<p>Teléfono: ${dato.telefono}</p>
+											</div>`);
+				}
+			}
+		})
+	});
+
+
 });
 
-//Array declarado como constante. Se inicializa con datos del localSotrage "o" se inicializa vacío. Según el caso
+
 let existencias = JSON.parse(localStorage.getItem("arrayExistencias")) || [];
 const facturasCompra = JSON.parse(localStorage.getItem("facturasDeCompra")) || [];
 const facturasVta = JSON.parse(localStorage.getItem("facturasDeVenta")) || [];
 let existenciasTabla = [];
 let arrayTemporalVta = [];
-//Función para subir al localStorage lo que se genera en la función que sigue (en la que ingresa la mercadería).
+let arrayTemporalClientes = [];
 const guardarLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
 
-/*
-					if (venta.formaPago === "EF") {
-						totalVenta = (item.precioVenta * venta.cantidad) * 0.90;
-					} else {
-						totalVenta = (item.precioVenta * venta.cantidad)
-					}
-					venta.totalVta = totalVenta;
-					ventasDiarias.push(venta);
-					guardarVentasLocal("arrayVentas", JSON.stringify(ventasDiarias));
-					$("#divVenta").prepend(`<div id="parrafoInfo" class="col-md-6 text-center alert alert-success" role="alert">
-											<p><strong>El total a cobrar por la venta de ${venta.cantidad} unidad/es de la ${item.tipoPrenda} ${item.nombre} es $${totalVenta}</strong></p>
-											<button type="button" class="btn btn-secondary" id="btnCerrarInfo">Cerrar</button>											
-											</div>`);
-					$("#btnCerrarInfo").click(() => {
-						$("#parrafoInfo").slideUp(800);
-					});
-				} else {
-					$("#divVenta").prepend(`<div id="parrafoAler" class="col-md-6 text-center alert alert-danger" role="alert" >
-											<p>No hay suficiente stock del artículo ${venta.articulo}, no se puede realizar la venta</p>
-											<button type="button" class="btn btn-secondary" id="btnCerrarInfo1">Cerrar</button>
-											</div>`);
-					$("#btnCerrarInfo1").click(() => {
-						$("#parrafoAler").slideUp(800);
-					})
-				}
-			}
-		})
-	}
-}
-*/
-
-//Jquery a partir del after de Fran, para desplegar el formulario de ventas
+//Desplegar inputs para registrar vta
 let contador = 0;
 const crearFormVta = () => {
 	$("#btn_abrir_formVta").click(() => {
@@ -388,9 +459,6 @@ const crearFormVta = () => {
 	})
 }
 crearFormVta();
-
-
-
 
 //Form de la sección ventas que arroja, por código o por nombre, info de los artículos existentes
 let formInfo = document.getElementById("formInfo");
@@ -437,7 +505,7 @@ function registrarConsulta(consultaArt) {
 };
 
 
-//Jquery a partir del after de Fran, para desplegar el formulario de info
+////Desplegar inputs para consultar info
 const crearFormInfo = () => {
 	$("#btn_abrir_form").click(() => {
 		$(".formInfoArt").slideToggle(800);
@@ -470,30 +538,33 @@ function ordenarMenorAMayor() {
 ordenarMenorAMayor();
 */
 /*
-$(document).ready(function () {
-	function subirImagenes() {
-		var Form = new FormData($("#subirImagenes")[0]);
-		$.ajax({
-			url: "action_subir_imagenes_productos.php",
-			type: "post",
-			data: Form,
-			processData: false,
-			contentType: false,
-			success: function(data){
-				alert("Archivos agregados")
+					if (venta.formaPago === "EF") {
+						totalVenta = (item.precioVenta * venta.cantidad) * 0.90;
+					} else {
+						totalVenta = (item.precioVenta * venta.cantidad)
+					}
+					venta.totalVta = totalVenta;
+					ventasDiarias.push(venta);
+					guardarVentasLocal("arrayVentas", JSON.stringify(ventasDiarias));
+					$("#divVenta").prepend(`<div id="parrafoInfo" class="col-md-6 text-center alert alert-success" role="alert">
+											<p><strong>El total a cobrar por la venta de ${venta.cantidad} unidad/es de la ${item.tipoPrenda} ${item.nombre} es $${totalVenta}</strong></p>
+											<button type="button" class="btn btn-secondary" id="btnCerrarInfo">Cerrar</button>
+											</div>`);
+					$("#btnCerrarInfo").click(() => {
+						$("#parrafoInfo").slideUp(800);
+					});
+				} else {
+					$("#divVenta").prepend(`<div id="parrafoAler" class="col-md-6 text-center alert alert-danger" role="alert" >
+											<p>No hay suficiente stock del artículo ${venta.articulo}, no se puede realizar la venta</p>
+											<button type="button" class="btn btn-secondary" id="btnCerrarInfo1">Cerrar</button>
+											</div>`);
+					$("#btnCerrarInfo1").click(() => {
+						$("#parrafoAler").slideUp(800);
+					})
+				}
 			}
 		})
 	}
-});
+}
 */
-
-
-
-
-
-
-
-
-
-
 
