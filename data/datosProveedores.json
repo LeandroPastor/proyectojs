@@ -1,0 +1,37 @@
+[
+    {
+        "id": 1,
+        "nombre": "Wupper Jeans",
+        "contacto": "Kelly",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 1,
+        "nombre": "Dulce Ironía",
+        "contacto": "Fernanda",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 1,
+        "nombre": "Pistacho",
+        "contacto": "nn",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 1,
+        "nombre": "Minu Madhu",
+        "contacto": "Gabriela",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 1,
+        "nombre": "Bora Jeans",
+        "contacto": "nn",
+        "telefono": 1130927485,
+        "saldo": 0
+    }
+]

@@ -36,3 +36,7 @@
     display: none;
     padding-left: 20px;
 }
+
+#resultado{
+    display: none;
+}

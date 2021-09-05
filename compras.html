@@ -46,104 +46,129 @@
 	</header>
 	<main>
 		<h1 class="text-center mt-2">Gestión Compras / Proveedores</h1>
+		<div id="resultado">
+			<section class="row mt-2 col-10 mx-auto">
+				<div class="col">
+					<div class="card">
+						<div class="card-header" id="infoFactCompra">
 
-		<section class="row mt-2 col-10 mx-auto">
-			<div class="col">
-				<div class="card">
-					<div class="card-header">
-						<h3 class="card-title">Cabecera Factura Compra</h3>
-					</div>
-					<div class="card-body">
-						<form class="row" id="formDatosCompra">
-							<div class="form-group col-md-6">
-								<label for="">Proveedor:</label>
-								<input type="text" class="form-control" placeholder="Nombre Proveedor"
-									id="inputProveedor" />
-							</div>
-							<div class="form-group col-md-4">
-								<label for="">Número Factura:</label>
-								<input type="number" class="form-control" placeholder="Número factura"
-									id="inputNumFactura" />
-							</div>
-							<div class="form-group col-md-2">
-								<label for="">Fecha:</label>
-								<input type="date" class="form-control" id="inputFecha" />
-							</div>
-						</form>
+						</div>
+						<div class="card-body col">
+							<form class="row">
+								<div class="form-group col-md-3">
+									<label for="">Importe Abonado:</label>
+									<input type="number" class="form-control" id="inputImportAbonado" />
+								</div>
+								<div class="form-group col-md-2">
+									<button type="submit" class="btn btn-secondary" id="btnConfirmarPago">Confirmar
+										Pago</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
-			</div>
-		</section>
-		<section class="row mt-2 col-10 mx-auto">
-			<div class="col-12">
-				<div class="card">
-					<div class="card-body">
-						<form class="row" id="formCompraDetalle">
-							<div class="form-group col-md-1">
-								<label for="">Cantidad:</label>
-								<input type="number" class="form-control" id="inputCantidad" placeholder="ej: 10" />
-							</div>
-							<div class="form-group col-md-2">
-								<label for="">Cod. Artículo:</label>
-								<input type="text" class="form-control" id="inputCodArticulo"
-									placeholder="ej: 01-1001" />
-							</div>
-							<div class="form-group col-md-3">
-								<label for="">Nombre Artículo:</label>
-								<input type="text" class="form-control" id="inputNomArticulo" />
-							</div>
-							<div class="form-group col-md-2">
-								<label for="">Tipo de Prenda:</label>
-								<input type="text" class="form-control" id="inputPrenda" />
-							</div>
-							<div class="form-group col-md-1">
-								<label for="">Almacen:</label>
-								<input type="number" class="form-control" id="inputAlmacen" />
-							</div>
-							<div class="form-group col-md-1">
-								<label for="">P.Costo:</label>
-								<input type="number" step="0.01" class="form-control" id="inputPCosto" />
-							</div>
-							<div class="form-group col-md-1">
-								<label for="">P.Venta:</label>
-								<input type="number" step="0.01" class="form-control" id="inputPVenta" />
-							</div>
-							<div class="form-group col-md-1">
-								<button type="submit" class="btn btn-secondary" id="inputAgregar">Agregar</button>
-							</div>
-						</form>
+			</section>
+		</div>
+		<div id="factCompra">
+			<section class="row mt-2 col-10 mx-auto">
+				<div class="col">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="card-title">Cabecera Factura Compra</h3>
+						</div>
+						<div class="card-body">
+							<form class="row" id="formDatosCompra">
+								<div class="form-group col-md-6">
+									<label for="">Proveedor:</label>
+									<input type="text" class="form-control" placeholder="Nombre Proveedor"
+										id="inputProveedor" />
+								</div>
+								<div class="form-group col-md-4">
+									<label for="">Número Factura:</label>
+									<input type="number" class="form-control" placeholder="Número factura"
+										id="inputNumFactura" />
+								</div>
+								<div class="form-group col-md-2">
+									<label for="">Fecha:</label>
+									<input type="date" class="form-control" id="inputFecha" />
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="col mt-2">
-				<button type="submit" class="btn btn-secondary" id="botonGuardarFactura">Guardar Info
-					Compra</button>
-			</div>
-		</section>
-		<section class="row mt-3 col-10 mx-auto">
-			<div class="col">
+			</section>
+			<section class="row mt-2 col-10 mx-auto">
+				<div class="col-12">
+					<div class="card">
+						<div class="card-body">
+							<form class="row" id="formCompraDetalle">
+								<div class="form-group col-md-1">
+									<label for="">Cantidad:</label>
+									<input type="number" class="form-control" id="inputCantidad" placeholder="ej: 10" />
+								</div>
+								<div class="form-group col-md-2">
+									<label for="">Cod. Artículo:</label>
+									<input type="text" class="form-control" id="inputCodArticulo"
+										placeholder="ej: 01-1001" />
+								</div>
+								<div class="form-group col-md-3">
+									<label for="">Nombre Artículo:</label>
+									<input type="text" class="form-control" id="inputNomArticulo" />
+								</div>
+								<div class="form-group col-md-2">
+									<label for="">Tipo de Prenda:</label>
+									<input type="text" class="form-control" id="inputPrenda" />
+								</div>
+								<div class="form-group col-md-1">
+									<label for="">Almacen:</label>
+									<input type="number" class="form-control" id="inputAlmacen" />
+								</div>
+								<div class="form-group col-md-1">
+									<label for="">P.Costo:</label>
+									<input type="number" step="0.01" class="form-control" id="inputPCosto" />
+								</div>
+								<div class="form-group col-md-1">
+									<label for="">P.Venta:</label>
+									<input type="number" step="0.01" class="form-control" id="inputPVenta" />
+								</div>
+								<div class="form-group col-md-1">
+									<button type="submit" class="btn btn-secondary" id="inputAgregar">Agregar</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col mt-2">
+					<button type="submit" class="btn btn-secondary" id="botonGuardarFactura">Guardar Info
+						Compra</button>
+				</div>
+			</section>
+			<section class="row mt-3 col-10 mx-auto">
+				<div class="col">
 
-				<table id="tablaCompra" class="table text-center">
-					<thead>
-						<tr>
-							<th>Cantidad</th>
-							<th>Cod.Artículo</th>
-							<th>Nombre Artículo</th>
-							<th>Prenda</th>
-							<th>Almacen</th>
-							<th>P.Costo</th>
-							<th>P.Venta</th>
-							<th>Total</th>
-							<th>Accion</th>
-						</tr>
-					</thead>
-					<tbody id="tableCompra">
-					</tbody>
-				</table>
+					<table id="tablaCompra" class="table text-center">
+						<thead>
+							<tr>
+								<th>Cantidad</th>
+								<th>Cod.Artículo</th>
+								<th>Nombre Artículo</th>
+								<th>Prenda</th>
+								<th>Almacen</th>
+								<th>P.Costo</th>
+								<th>P.Venta</th>
+								<th>Total</th>
+								<th>Accion</th>
+							</tr>
+						</thead>
+						<tbody id="tableCompra">
+						</tbody>
+					</table>
 
 
-			</div>
-		</section>
+				</div>
+			</section>
+		</div>
+
 
 
 

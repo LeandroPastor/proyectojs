@@ -133,6 +133,16 @@ $(document).ready(function () {
 			localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
 
 			$("#tablaCompra tr:gt(0)").remove();
+
+			$("#infoFactCompra").append(`
+										<h4>Factura nº${factCompra.numeroFact} / Proveedor ${factCompra.proveedor} / Total $${factCompra.totalCompra}<h4>
+										<p>Ingresar monto cancelado y hace clic en "Confirmar Pago"</p>
+										`);
+
+			$("#factCompra").fadeOut(800, function () {
+				$("#resultado").fadeIn(800);
+			});
+
 			function vaciar() {
 				existenciasTabla = [];
 			}
@@ -142,6 +152,15 @@ $(document).ready(function () {
 			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
 		}
 	});
+
+
+	$("#btnConfirmarPago").on("click", function (e) {
+		e.preventDefault();
+		$("#resultado").fadeOut(800, function () {
+			$("#factCompra").fadeIn(800);
+		});
+	});
+
 
 
 	//Función para autocompletar con info de existencias si existe y con placeholder cuando no existe el articulo
