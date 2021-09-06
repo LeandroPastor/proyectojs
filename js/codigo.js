@@ -12,6 +12,24 @@ import { Cliente } from "./Constructor.js"
 $(document).ready(function () {
 
 
+	//Probando archivo json
+	const json = "data/datosProveedores.json"
+	let array = [];
+	fetch(json)
+		.then(response => response.json())
+		.then(function (data) {
+			array = data;
+			//console.log(data)
+		})
+
+
+
+
+
+
+
+
+
 	//Función que toma valores del DOM para instanciar objetos que se pushean a dos arrays distintos, el de existencias y el de existencias para info
 	//de factura de compra
 	$("#formCompraDetalle").on("submit", function (e) {
@@ -136,14 +154,17 @@ $(document).ready(function () {
 
 			$("#tablaCompra tr:gt(0)").remove();
 
-			$("#infoFactCompra").append(`
+			$("#infoFactCompra").append(`<div id="div2">
 										<h4>Proveedor: ${factCompra.proveedor} / Factura nº: ${factCompra.numeroFact} / Total: $${factCompra.totalCompra}<h4>
 										<p>Ingresar monto a cancelar y hacer clic en "Confirmar Pago"</p>
+										</div>
 										`);
 
 			$("#factCompra").fadeOut(800, function () {
 				$("#resultado").fadeIn(800);
 			});
+
+
 
 			function vaciar() {
 				existenciasTabla = [];
@@ -162,12 +183,14 @@ $(document).ready(function () {
 		e.preventDefault();
 
 		if ($("#inputImportAbonado").val() != "") {
+			$("#div2").empty();
 			$("#resultado").fadeOut(800, function () {
 				$("#factCompra").fadeIn(800);
 			});
 		} else {
 			alert("Debe ingresar el monto abonado antes de confirmar");
 		}
+		$("#inputPagoProv")[0].reset();
 
 	});
 
@@ -362,11 +385,12 @@ $(document).ready(function () {
 
 			localStorage.setItem("facturasDeVenta", JSON.stringify(facturasVta));
 
-			$("#infoFactVta").append(`
+			$("#infoFactVta").append(`<div id="div1">
 									<h5>Cliente: ${factVta.cliente} / Ticket: ${factVta.ticket} / Total: $${factVta.total}</h5>
 									<p id="detVta"><strong>Detalle:</strong></p>
 									<p>Forma de Pago: ${factVta.formaDePago}</p>
-									<button id="btnOk" type="submit" class="btn btn-secondary">Confirmar</button>									
+									<button id="btnOk" type="submit" class="btn btn-secondary">Confirmar</button>	
+									</div>								
 									`);
 			if ($('input[name="formaDePago"]:checked').val() === "EF") {
 				for (let i = 0; i < arrayTemporalVta.length; i++) {
@@ -382,22 +406,17 @@ $(document).ready(function () {
 				}
 			}
 
-
-
-
-
 			$("#formFactVta").fadeOut(800, function () {
 				$("#resultadoVta").fadeIn(800);
 			});
 
 			$("#tablaVenta tr:gt(0)").remove();
+			$('input[name="formaDePago"]').prop('checked', false)
 
 			function vaciar() {
 				arrayTemporalVta = [];
 			}
 			vaciar();
-
-
 
 		} else {
 			$("#alertaVta").fadeIn(800, function () {
@@ -406,12 +425,12 @@ $(document).ready(function () {
 		}
 
 		$("#btnOk").click(() => {
+			$("#div1").empty();
+
 			$("#resultadoVta").fadeOut(800, function () {
 				$("#formFactVta").fadeIn(800);
 			});
 		});
-
-
 
 	});
 
