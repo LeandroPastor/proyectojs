@@ -36,7 +36,9 @@ $(document).ready(function () {
 
 			$("#formCompraDetalle")[0].reset();
 		} else {
-			alert("debe completar todos los campos!!")//Acá falta generar evento en el DOM
+			$("#alerta").fadeIn(800, function () {
+				$("#alerta").fadeOut(1500);
+			})
 		}
 	});
 
@@ -135,8 +137,8 @@ $(document).ready(function () {
 			$("#tablaCompra tr:gt(0)").remove();
 
 			$("#infoFactCompra").append(`
-										<h4>Factura nº${factCompra.numeroFact} / Proveedor ${factCompra.proveedor} / Total $${factCompra.totalCompra}<h4>
-										<p>Ingresar monto cancelado y hace clic en "Confirmar Pago"</p>
+										<h4>Proveedor: ${factCompra.proveedor} / Factura nº: ${factCompra.numeroFact} / Total: $${factCompra.totalCompra}<h4>
+										<p>Ingresar monto a cancelar y hacer clic en "Confirmar Pago"</p>
 										`);
 
 			$("#factCompra").fadeOut(800, function () {
@@ -149,18 +151,25 @@ $(document).ready(function () {
 			vaciar();
 
 		} else {
-			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
+			$("#alerta").fadeIn(800, function () {
+				$("#alerta").fadeOut(1500);
+			})
 		}
 	});
 
-
+	//Botón para confimar pago y traer nuevamente a la vista los campos para seguir ingresando una nueva factura(acá ver cómo registrar ese pago)
 	$("#btnConfirmarPago").on("click", function (e) {
 		e.preventDefault();
-		$("#resultado").fadeOut(800, function () {
-			$("#factCompra").fadeIn(800);
-		});
-	});
 
+		if ($("#inputImportAbonado").val() != "") {
+			$("#resultado").fadeOut(800, function () {
+				$("#factCompra").fadeIn(800);
+			});
+		} else {
+			alert("Debe ingresar el monto abonado antes de confirmar");
+		}
+
+	});
 
 
 	//Función para autocompletar con info de existencias si existe y con placeholder cuando no existe el articulo
@@ -226,7 +235,9 @@ $(document).ready(function () {
 
 			$("#formVtaDetalle")[0].reset();
 		} else {
-			alert("debe completar todos los campos!!")//Acá falta generar evento en el DOM
+			$("#alertaVta").fadeIn(800, function () {
+				$("#alertaVta").fadeOut(1500);
+			})
 		}
 	});
 
@@ -293,7 +304,7 @@ $(document).ready(function () {
 		}
 	});
 
-	//Función para borrar carga de articulos vendidos
+	//Función para borrar carga de articulos a vender
 	$(function () {
 		$("#tableVenta").on("click", ".borrarVta", function (e) {
 			e.preventDefault();
@@ -319,13 +330,13 @@ $(document).ready(function () {
 		});
 	});
 
-	//Función que genera array para localStorage y que resetea el array temporal de ventas
+	//Función que genera array para localStorage (guarda la factura de vta) y que resetea el array temporal de ventas
 	$("#botGuardarFactVta").on("click", function (e) {
 		e.preventDefault();
 
 		let totalFacturaVta = 0;//variable para calcular total de la factura de Vta y alojar como elemento del objeto
 
-		if ($("#inputNumCliente").val() != "" && $("#inputNomCliente").val() != "" && $("#inputNumTicket").val() != "" && arrayTemporalVta != "" && $("#inputFechaVta").val() != "") {
+		if ($("#inputNumCliente").val() != "" && $("#inputNomCliente").val() != "" && $("#inputNumTicket").val() != "" && arrayTemporalVta != "" && $("#inputFechaVta").val() != "" && $('input[name="formaDePago"]:checked').val()) {
 			const id = $("#inputNumCliente").val(),
 				cliente = $("#inputNomCliente").val(),
 				ticket = $("#inputNumTicket").val(),
@@ -335,9 +346,15 @@ $(document).ready(function () {
 			arrayTemporalVta.forEach(item => {
 				totalFacturaVta += item["total"];
 			})
-			const total = totalFacturaVta;
 
-			const factVta = new FacturaVenta(id, cliente, ticket, fecha, detalleVta, total);
+			if ($('input[name="formaDePago"]:checked').val() === "EF") {
+				totalFacturaVta = totalFacturaVta * 0.9
+			}
+
+			const total = totalFacturaVta,
+				formaDePago = $('input[name="formaDePago"]:checked').val();
+
+			const factVta = new FacturaVenta(id, cliente, ticket, fecha, detalleVta, total, formaDePago);
 			facturasVta.push(factVta);
 
 			$("#formDatosVta")[0].reset();
@@ -345,16 +362,63 @@ $(document).ready(function () {
 
 			localStorage.setItem("facturasDeVenta", JSON.stringify(facturasVta));
 
+			$("#infoFactVta").append(`
+									<h5>Cliente: ${factVta.cliente} / Ticket: ${factVta.ticket} / Total: $${factVta.total}</h5>
+									<p id="detVta"><strong>Detalle:</strong></p>
+									<p>Forma de Pago: ${factVta.formaDePago}</p>
+									<button id="btnOk" type="submit" class="btn btn-secondary">Confirmar</button>									
+									`);
+			if ($('input[name="formaDePago"]:checked').val() === "EF") {
+				for (let i = 0; i < arrayTemporalVta.length; i++) {
+					$("#detVta").append(`
+										<p class="mt-2">${arrayTemporalVta[i].cantidad} articulo/s ${arrayTemporalVta[i].nombre} por $${arrayTemporalVta[i].total} menos 10%</p>
+										`);
+				}
+			} else {
+				for (let i = 0; i < arrayTemporalVta.length; i++) {
+					$("#detVta").append(`
+										<p class="mt-2">${arrayTemporalVta[i].cantidad} articulo/s ${arrayTemporalVta[i].nombre} por $${arrayTemporalVta[i].total}</p>
+										`);
+				}
+			}
+
+
+
+
+
+			$("#formFactVta").fadeOut(800, function () {
+				$("#resultadoVta").fadeIn(800);
+			});
+
 			$("#tablaVenta tr:gt(0)").remove();
+
 			function vaciar() {
 				arrayTemporalVta = [];
 			}
 			vaciar();
 
+
+
 		} else {
-			alert("Debe completar todos los datos para poder guardar la factura!!!");//Acá falta generar evento en el DOM
+			$("#alertaVta").fadeIn(800, function () {
+				$("#alertaVta").fadeOut(1500);
+			})
 		}
+
+		$("#btnOk").click(() => {
+			$("#resultadoVta").fadeOut(800, function () {
+				$("#formFactVta").fadeIn(800);
+			});
+		});
+
+
+
 	});
+
+
+
+
+
 
 
 	//------------------------------------------------------------------------------------
@@ -418,37 +482,7 @@ $(document).ready(function () {
 	});
 
 
-	//Desafío Ajax!!!
-	//Se simula ingreso de clientes a base de datos
-	const URL = "https://jsonplaceholder.typicode.com/posts";
-	const infoAlta = arrayTemporalClientes;
-	$("#btnGuardarJsonCliente").click(() => {
-		$.ajax({
-			method: "POST",
-			url: URL,
-			data: infoAlta,
-			success: function () {
-				$("#alta").append(`<p>La clienta ${infoAlta[0].nombre} ${infoAlta[0].apellido} se ingresó a la base de datos exitosamente</p>`)
-			}
-		})
-	});
-	//Se imprime listado de clientes en base a un Json
-	const URLJ = "data/datosClientes.json"
-	$("#btn_Info_clientes").click(() => {
-		$.getJSON(URLJ, function (respuesta, estado) {
-			if (estado === "success") {
-				let datos = respuesta;
-				for (const dato of datos) {
-					$("#mostrarDatos").append(`<div>
-												<h4>Cliente: ${dato.nombre} ${dato.apellido}</h4>
-												<p>Número de cliente: ${dato.id}</P>
-												<p>Saldo en cuenta: $${dato.saldo}</p>
-												<p>Teléfono: ${dato.telefono}</p>
-											</div>`);
-				}
-			}
-		})
-	});
+
 
 
 });
@@ -478,6 +512,9 @@ const crearFormVta = () => {
 	})
 }
 crearFormVta();
+
+
+
 
 //Form de la sección ventas que arroja, por código o por nombre, info de los artículos existentes
 let formInfo = document.getElementById("formInfo");
@@ -587,3 +624,42 @@ ordenarMenorAMayor();
 }
 */
 
+
+
+//------------------------------------------------------------------------------------
+//Hecho para desafío Ajax, lo guardo porque no se va a usar de esa manera!!!
+//------------------------------------------------------------------------------------
+
+//Desafío Ajax!!!
+//Se simula ingreso de clientes a base de datos
+/*
+const URL = "https://jsonplaceholder.typicode.com/posts";
+const infoAlta = arrayTemporalClientes;
+$("#btnGuardarJsonCliente").click(() => {
+	$.ajax({
+		method: "POST",
+		url: URL,
+		data: infoAlta,
+		success: function () {
+			$("#alta").append(`<p>La clienta ${infoAlta[0].nombre} ${infoAlta[0].apellido} se ingresó a la base de datos exitosamente</p>`)
+		}
+	})
+});
+//Se imprime listado de clientes en base a un Json
+const URLJ = "data/datosClientes.json"
+$("#btn_Info_clientes").click(() => {
+	$.getJSON(URLJ, function (respuesta, estado) {
+		if (estado === "success") {
+			let datos = respuesta;
+			for (const dato of datos) {
+				$("#mostrarDatos").append(`<div>
+												<h4>Cliente: ${dato.nombre} ${dato.apellido}</h4>
+												<p>Número de cliente: ${dato.id}</P>
+												<p>Saldo en cuenta: $${dato.saldo}</p>
+												<p>Teléfono: ${dato.telefono}</p>
+											</div>`);
+			}
+		}
+	})
+});
+*/

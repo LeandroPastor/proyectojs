@@ -32,13 +32,14 @@ export class PrendaVendida {
 };
 
 export class FacturaVenta {
-    constructor(id, cliente, ticket, fecha, detalleVta, total) {
+    constructor(id, cliente, ticket, fecha, detalleVta, total, formaDePago) {
         this.id = Number(id);
         this.cliente = cliente.toUpperCase();
         this.ticket = Number(ticket);
         this.fecha = fecha;
         this.detalleVta = detalleVta;
         this.total = total;
+        this.formaDePago = formaDePago;
     }
 }
 
