@@ -5,7 +5,7 @@ import { FacturaCompra } from "./Constructor.js"
 import { FacturaVenta } from "./Constructor.js"
 import { Cliente } from "./Constructor.js"
 
-
+//para commit
 
 function ordenarPorFecha(arrayOrdenar) {
 	arrayOrdenar.sort((a, b) => {
