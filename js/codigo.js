@@ -7,28 +7,35 @@ import { Cliente } from "./Constructor.js"
 
 
 
+function ordenarPorFecha(arrayOrdenar) {
+	arrayOrdenar.sort((a, b) => {
+		if (a.fecha < b.fecha) {
+			return -1;
+		}
+	})
+}
+
+
 
 
 $(document).ready(function () {
 
 
-	//Probando archivo json
-	const json = "data/datosProveedores.json"
-	let array = [];
-	fetch(json)
-		.then(response => response.json())
-		.then(function (data) {
-			array = data;
-			//console.log(data)
-		})
+	//Se usa archivo Json para completar select de html compras
+	$.ajax({
+		method: "GET",
+		url: "data/datosProveedores.json",
+		dataType: "json",
+		success: function (data) {
+			for (let i = 0; i < data.length; i++) {
+				$("#selectProv").append(`
+										<option value="${i}">${data[i].nombre}</option>
+										`);
 
 
-
-
-
-
-
-
+			};
+		}
+	});
 
 	//Función que toma valores del DOM para instanciar objetos que se pushean a dos arrays distintos, el de existencias y el de existencias para info
 	//de factura de compra
@@ -51,6 +58,7 @@ $(document).ready(function () {
 
 			armarTabla();
 			agregar(prenda);
+			mostrar();
 
 			$("#formCompraDetalle")[0].reset();
 		} else {
@@ -59,6 +67,16 @@ $(document).ready(function () {
 			})
 		}
 	});
+
+	//Función para ir pintando el total de la factura de compra
+	function mostrar() {
+		let conteoTotal = 0;
+
+		existenciasTabla.forEach(item => {
+			conteoTotal += item["total"];
+		})
+		$("#inputMostrarTotal").val(`${conteoTotal}`)
+	}
 
 	//funcion que genera stock de mercadería en base a factura de compra
 	function agregar(prenda) {
@@ -97,7 +115,7 @@ $(document).ready(function () {
 		});
 	};
 
-	//Función para eliminar de lo pintado en DOM (en la factura antes de guardarla) que impacta en existencias(stock) 
+	//Función para eliminar articulos pintados en DOM (en la factura antes de guardarla) que impacta en existencias(stock) 
 	$(function () {
 		$("#tableCompra").on("click", ".borrar", function (e) {
 			e.preventDefault();
@@ -133,8 +151,9 @@ $(document).ready(function () {
 
 		let totalFactura = 0;//variable para calcular total de la factura de compra y alojar como elemento del objeto
 
-		if ($("#inputProveedor").val() != "" && $("#inputNumFactura").val() != "" && $("#inputFecha").val() != "" && existenciasTabla != "") {
-			const proveedor = $("#inputProveedor").val(),
+		if ($("#selectProv").val() > 0 && $("#inputNumFactura").val() != "" && $("#inputFecha").val() != "" && existenciasTabla != "" && $("#inputPago").val() != "") {
+			const id = $("#selectProv").val(),
+				proveedor = $("#selectProv option:selected").text(),
 				numeroFact = $("#inputNumFactura").val(),
 				fecha = $("#inputFecha").val(),
 				detalle = existenciasTabla;
@@ -142,21 +161,26 @@ $(document).ready(function () {
 			existenciasTabla.forEach(item => {
 				totalFactura += item["total"];
 			})
-			const totalCompra = totalFactura;
+			const totalCompra = totalFactura,
+				pago = $("#inputPago").val();
 
-			const factCompra = new FacturaCompra(proveedor, numeroFact, fecha, detalle, totalCompra);
+			const factCompra = new FacturaCompra(id, proveedor, numeroFact, fecha, detalle, totalCompra, pago);
 			facturasCompra.push(factCompra);
 
 			$("#formDatosCompra")[0].reset();
 			$("#formCompraDetalle")[0].reset();
+			$("#formPago")[0].reset();
 
 			localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
+
+
+
 
 			$("#tablaCompra tr:gt(0)").remove();
 
 			$("#infoFactCompra").append(`<div id="div2">
-										<h4>Proveedor: ${factCompra.proveedor} / Factura nº: ${factCompra.numeroFact} / Total: $${factCompra.totalCompra}<h4>
-										<p>Ingresar monto a cancelar y hacer clic en "Confirmar Pago"</p>
+										<h4>Proveedor: ${factCompra.proveedor} / Factura nº: ${factCompra.numeroFact} / Total: $${factCompra.totalCompra} / Pago: $${factCompra.pago}<h4>
+										<p>Chequear información y "Confirmar"</p>
 										</div>
 										`);
 
@@ -164,6 +188,7 @@ $(document).ready(function () {
 				$("#resultado").fadeIn(800);
 			});
 
+			$("#seccionConsultaProv").fadeOut(800);
 
 
 			function vaciar() {
@@ -178,22 +203,133 @@ $(document).ready(function () {
 		}
 	});
 
-	//Botón para confimar pago y traer nuevamente a la vista los campos para seguir ingresando una nueva factura(acá ver cómo registrar ese pago)
+	//click que muestra facturas de cada proveedor, saldo pendiente de cada una y saldo total adeudado
+	$("#btnConsultaProv").on("click", function (e) {
+		e.preventDefault();
+
+		const id = $("#idConsultaProv").val();
+		const facturasCompraProv = JSON.parse(localStorage.getItem("facturasDeCompra"));
+
+		arrayTempInfoProv = facturasCompraProv.filter(factura => factura.id == id);
+
+		ordenarPorFecha(arrayTempInfoProv);
+
+		$("#tableInfoProv").empty();
+
+		let creditoCompra = 0;
+		let debitocompra = 0;
+		let totalSaldo = 0;
+
+		arrayTempInfoProv.forEach(function (detalle, i) {
+			let pendiente = detalle.totalCompra - detalle.pago;
+			creditoCompra += detalle["totalCompra"];
+			debitocompra += detalle["pago"];
+			totalSaldo = creditoCompra - debitocompra;
+
+			$("#tableInfoProv").append(`<tr>
+										<td>${detalle.fecha}</td>
+										<td>${detalle.numeroFact}</td>
+										<td>${detalle.totalCompra}</td>
+										<td>${detalle.pago}</td>
+										<td id="pId${i}">${pendiente} </td>
+										</tr>`);
+
+			$("#totalPend").val(totalSaldo);
+		});
+
+		$("#factCompra").fadeOut(400);
+	});
+
+
+	$("#idConsultaProv").change(function (e) {
+		const idP = $("#idConsultaProv").val();
+		if (facturasCompra.some(item => item.id == idP)) {
+			facturasCompra.forEach(item => {
+				if (item.id == idP) {
+					$("#nombreConsultaProv").val(item.proveedor);
+				}
+			});
+		};
+	});
+
+
+	$("#btnPagarProv").on("click", function (e) {
+		e.preventDefault();
+		const id = $("#idConsultaProv").val();
+		let montoP = Number($("#idPagoSaldo").val());
+
+		ordenarPorFecha(facturasCompra)
+
+		while (montoP > 0) {
+			let facturaPendiente = facturasCompra.find(item => item.id == id && (item.totalCompra - item.pago) > 0)
+			let saldo = facturaPendiente.totalCompra - facturaPendiente.pago;
+			if (montoP <= saldo) {
+				facturaPendiente.pago = facturaPendiente.pago + montoP;
+				montoP = montoP - montoP;
+			} else if (montoP > saldo) {
+				facturaPendiente.pago = facturaPendiente.pago + saldo;
+				montoP = montoP - saldo
+			}
+		};
+
+		$("#formPagoSaldoP")[0].reset();
+
+		localStorage.setItem("facturasDeCompra", JSON.stringify(facturasCompra));
+
+		const facturasCompraProv = JSON.parse(localStorage.getItem("facturasDeCompra"));
+
+		arrayTempInfoProv = facturasCompraProv.filter(factura => factura.id == id);
+
+		ordenarPorFecha(arrayTempInfoProv);
+
+		$("#tableInfoProv").empty();
+
+		let creditoCompra = 0;
+		let debitocompra = 0;
+		let totalSaldo = 0;
+
+		arrayTempInfoProv.forEach(function (detalle, i) {
+			let pendiente = detalle.totalCompra - detalle.pago;
+			creditoCompra += detalle["totalCompra"];
+			debitocompra += detalle["pago"];
+			totalSaldo = creditoCompra - debitocompra;
+
+			$("#tableInfoProv").append(`<tr>
+										<td>${detalle.fecha}</td>
+										<td>${detalle.numeroFact}</td>
+										<td>${detalle.totalCompra}</td>
+										<td>${detalle.pago}</td>
+										<td id="pId${i}">${pendiente} </td>
+										</tr>`);
+
+			$("#totalPend").val(totalSaldo);
+		});
+	});
+
+	$("#btnLimpiarConsultaProv").on("click", function (e) {
+		e.preventDefault();
+
+		$("#formPagoSaldoP")[0].reset();
+		$("#formConsulta")[0].reset();
+		$("#tablaInfoProv tr:gt(0)").remove();
+		$("#factCompra").fadeIn(400);
+	});
+
+	//Botón para confimar y traer nuevamente a la vista los campos para seguir ingresando una nueva factura
 	$("#btnConfirmarPago").on("click", function (e) {
 		e.preventDefault();
 
-		if ($("#inputImportAbonado").val() != "") {
-			$("#div2").empty();
-			$("#resultado").fadeOut(800, function () {
-				$("#factCompra").fadeIn(800);
-			});
-		} else {
-			alert("Debe ingresar el monto abonado antes de confirmar");
-		}
+		$("#div2").remove();
+
+		$("#resultado").fadeOut(700);
+
+		$("#factCompra").fadeIn(1000);
+
 		$("#inputPagoProv")[0].reset();
 
-	});
+		$("#seccionConsultaProv").fadeIn(1000);
 
+	});
 
 	//Función para autocompletar con info de existencias si existe y con placeholder cuando no existe el articulo
 	$("#inputCodArticulo").change(function (e) {
@@ -217,20 +353,25 @@ $(document).ready(function () {
 		}
 	});
 
-
-	//Prueba para filtar por fecha y sacar totales de compra en base a ese parámetro, los mismo puede aplicarse a proveedor. Habría que ver como buscar
-	//según el artículo, en que factura tuvo movimiento (compra o venta)
-	//let facturasDeCompraLStorage = JSON.parse(localStorage.getItem("facturasDeCompra"));
-	//console.log(facturasDeCompraLStorage);
-
 	/*
-	const filtro1 = facturasDeCompraLStorage.filter(factura => factura.fecha >= "2021-09-01" && factura.fecha <= "2021-09-30")
-	//console.log(filtro1);
-	let comprasMes = 0;
-	filtro1.forEach(item => {
-		comprasMes += item["totalCompra"];
-	})
-	//console.log(comprasMes);
+		//Prueba para filtar por fecha y sacar totales de compra en base a ese parámetro, los mismo puede aplicarse a proveedor. Habría que ver como buscar
+		//según el artículo, en que factura tuvo movimiento (compra o venta)
+		let facturasDeCompraLStorage = JSON.parse(localStorage.getItem("facturasDeCompra"));
+		//console.log(facturasDeCompraLStorage);
+		
+		const filtro2 = facturasDeCompraLStorage.filter(factura => factura.proveedor == "WUPPER JEANS")
+		console.log(filtro2)
+		//const filtro1 = facturasDeCompraLStorage.filter(factura => factura.fecha >= "2021-09-01" && factura.fecha <= "2021-09-30")
+		//console.log(filtro1);
+		let totales = 0;
+		let pagos = 0;
+		filtro2.forEach(item => {
+			totales += item["totalCompra"];
+			pagos += item["pago"];
+			let saldo = totales - pagos;
+			console.log(saldo)
+		})
+		//console.log(comprasMes);
 	*/
 
 
@@ -263,6 +404,8 @@ $(document).ready(function () {
 			})
 		}
 	});
+
+
 
 	//Funcion que modifica el stock en el localStorage
 	function modificarExistencias(venta) {
@@ -513,6 +656,7 @@ const facturasVta = JSON.parse(localStorage.getItem("facturasDeVenta")) || [];
 let existenciasTabla = [];
 let arrayTemporalVta = [];
 let arrayTemporalClientes = [];
+let arrayTempInfoProv = [];
 const guardarLocal = (clave, valor) => { localStorage.setItem(clave, valor) };
 
 //Desplegar inputs para registrar vta
@@ -598,20 +742,10 @@ crearFormInfo();
 
 
 
-/*
-//Desafío complementario
-//Se crea la función ordenarMenorAMayor para luego ejecutarla y ordenar el array productos por precio de vta,
-//de menos a mayor
-function ordenarMenorAMayor() {
-	productos.sort((a, b) => {
-		if (a.precioVenta < b.precioVenta) {
-			return -1;
-		}
-	})
-}
 
-ordenarMenorAMayor();
-*/
+
+
+
 /*
 					if (venta.formaPago === "EF") {
 						totalVenta = (item.precioVenta * venta.cantidad) * 0.90;
@@ -661,23 +795,6 @@ $("#btnGuardarJsonCliente").click(() => {
 		data: infoAlta,
 		success: function () {
 			$("#alta").append(`<p>La clienta ${infoAlta[0].nombre} ${infoAlta[0].apellido} se ingresó a la base de datos exitosamente</p>`)
-		}
-	})
-});
-//Se imprime listado de clientes en base a un Json
-const URLJ = "data/datosClientes.json"
-$("#btn_Info_clientes").click(() => {
-	$.getJSON(URLJ, function (respuesta, estado) {
-		if (estado === "success") {
-			let datos = respuesta;
-			for (const dato of datos) {
-				$("#mostrarDatos").append(`<div>
-												<h4>Cliente: ${dato.nombre} ${dato.apellido}</h4>
-												<p>Número de cliente: ${dato.id}</P>
-												<p>Saldo en cuenta: $${dato.saldo}</p>
-												<p>Teléfono: ${dato.telefono}</p>
-											</div>`);
-			}
 		}
 	})
 });

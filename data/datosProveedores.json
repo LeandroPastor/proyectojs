@@ -1,5 +1,12 @@
 [
     {
+        "id": 0,
+        "nombre": "--Seleccione--",
+        "contacto": "nn",
+        "telefono": 1111111111,
+        "saldo": 0
+    },
+    {
         "id": 1,
         "nombre": "Wupper Jeans",
         "contacto": "Kelly",
@@ -29,6 +36,20 @@
     },
     {
         "id": 5,
+        "nombre": "Kiara",
+        "contacto": "Gabriela",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 6,
+        "nombre": "MeriPiu",
+        "contacto": "Gabriela",
+        "telefono": 1130927485,
+        "saldo": 0
+    },
+    {
+        "id": 7,
         "nombre": "Bora Jeans",
         "contacto": "nn",
         "telefono": 1130927485,

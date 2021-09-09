@@ -12,14 +12,17 @@ export class Prenda {
 };
 
 export class FacturaCompra {
-    constructor(proveedor, numeroFact, fecha, detalle, totalCompra) {
+    constructor(id, proveedor, numeroFact, fecha, detalle, totalCompra, pago) {
+        this.id = Number(id);
         this.proveedor = proveedor.toUpperCase();
         this.numeroFact = Number(numeroFact);
         this.fecha = fecha;
         this.detalle = detalle;
         this.totalCompra = totalCompra;
+        this.pago = Number(pago);
     }
 };
+
 
 export class PrendaVendida {
     constructor(cantidad, articulo, nombre, pUnit) {
