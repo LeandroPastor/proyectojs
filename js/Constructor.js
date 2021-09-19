@@ -35,7 +35,7 @@ export class PrendaVendida {
 };
 
 export class FacturaVenta {
-    constructor(id, cliente, ticket, fecha, detalleVta, total, formaDePago) {
+    constructor(id, cliente, ticket, fecha, detalleVta, total, formaDePago, pago) {
         this.id = Number(id);
         this.cliente = cliente.toUpperCase();
         this.ticket = Number(ticket);
@@ -43,6 +43,7 @@ export class FacturaVenta {
         this.detalleVta = detalleVta;
         this.total = total;
         this.formaDePago = formaDePago;
+        this.pago = Number(pago);
     }
 }
 
@@ -61,18 +62,26 @@ export class Cliente {
         this.telefono = Number(telefono);
         this.saldo = Number(saldo);
     }
-}
+};
 
-/*
-class CajaDiaria {
-    constructor(inicio, ventaEf, ventaTJ, ventaCP, gastosDiarios, gastosExtras, cierre) {
-        this.inicio = Number(inicio);
-        this.ventaEf = Number(ventaEf);
-        this.ventaTJ = Number(ventaTJ);
-        this.ventaCP = Number(ventaCP);
-        this.gastosDiarios = Number(gastosDiarios);
-        this.gastosExtras = Number(gastosExtras);
-        this.cierre = Number(cierre);
+
+export class RegistradorDebHabCP {
+    constructor(fecha, id, debe, haber, clase) {
+        this.fecha = fecha;
+        this.id = Number(id);
+        this.debe = Number(debe);
+        this.haber = Number(haber);
+        this.clase = clase.toUpperCase()
     }
 };
-*/
+
+
+export class Caja1 {
+    constructor(fecha, descripcion, debe, haber, saldo,) {
+        this.fecha = fecha;
+        this.descripcion = descripcion;
+        this.debe = Number(debe);
+        this.haber = Number(haber);
+        this.saldo = Number(saldo);
+    }
+};

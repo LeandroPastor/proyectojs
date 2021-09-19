@@ -1,28 +1,9 @@
-.botonInfo {
-    padding-left: 20px;
-    padding-top: 40px;
-}
-
 .formInfoArt {
-    padding: 20px;
+    margin-top: 20px;
     display: none;
 }
-
-#parrafoInfo{
-    height: 60px;
-    padding: 20px;
-    margin: 20px;
-}
-
-#parrafoAler{
-    height: 60px;
-    padding: 20px;
-    margin: 20px;
-}
-
 
 #formFactVta{
-    display: none;
     padding-left: 20px;
 }
 
@@ -42,3 +23,94 @@
     display: none;
     padding-left: 20px;
 }
+
+#seccionConsC{
+    display:none;
+}
+
+#contenedor{
+    display: flex;
+}
+
+#infoV {
+    display: flex;
+    flex-direction: column;
+}
+
+#contenedorInfVta {
+    display: flex;
+    flex-direction: column;
+}
+
+#botonesInfoV{
+    display: flex;
+}
+
+#botonesInfoV button{
+    max-width: 250px;
+    width: 100%;
+    padding: 6px 12px;   
+    border: 1px solid gray;
+}
+#radio{
+     padding-bottom: 0;
+ }
+
+ #subRadio{
+     padding-top: 5px;
+ }
+
+ #btnEstilo{
+     position: relative;
+     left: 185px;
+ }
+
+ #formVtaDetalle div {
+     padding: 0 5px;
+ }
+
+#formVtaDetalle div input{
+    padding: 6px 5px;
+}
+
+#seccionConsultaCliente {
+    display: none;
+    margin-top: 10px;
+}
+
+#seccionConsultaCtaCliente {
+    margin-top: 10px;
+    display: none;
+}
+
+#formAltaCliente div {
+    padding: 0 4px;
+}
+
+#buscandoCliente {
+    display: none;
+}
+
+#contenedorCaja{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#contenedorInfVta{
+    display: none;
+}
+
+#contenedorInfMes{
+    display: none;
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -31,10 +31,10 @@
                             <a class="nav-link active" aria-current="page" href="compras.html">Compras</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Caja</a>
+                            <a class="nav-link active" href="caja.html">Caja</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Informes</a>
+                            <a class="nav-link active" href="informes.html">Informes</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="clientes.html">Clientes</a>
@@ -46,7 +46,7 @@
     </header>
     <main>
         <h1 class="text-center mt-2">Gestión Clientes</h1>
-        <section class="row mt-2 col-10 mx-auto">
+        <section class="row mt-4 col-md-7">
             <div class="col">
                 <div class="card">
                     <div class="card-header">
@@ -73,38 +73,88 @@
                                 <input type="number" class="form-control" placeholder="ej: 1130927458"
                                     id="inputTelefono" />
                             </div>
-                            <div class="form-group col-md-2">
-                                <button type="submit" class="btn btn-secondary" id="inputAltaCliente">Agregar
-                                    Cliente</button>
+                            <div class="form-group mt-4 col-md-1">
+                                <button type="submit" class="btn btn-secondary" id="inputAltaCliente">Alta</button>
+                            </div>
+                            <div class="form-group mt-4 col-md-1">
+                                <button type="reset" class="btn btn-secondary">Borrar</button>
                             </div>
                         </form>
-                    </div>
-                    <div class="col mt-2">
-                        <button type="submit" class="btn btn-secondary" id="btnGuardarJsonCliente">Guardar
-                            Cliente/s en base de datos</button>
                     </div>
                 </div>
             </div>
         </section>
-        <section class="row mt-3 col-10 mx-auto">
-            <div class="col-md-12">
-                <table id="tablaCliente" class="table text-center">
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Teléfono</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableCliente">
-                    </tbody>
-                </table>
+        <div class="form-group mt-4 col-md-6">
+            <button type="submit" class="btn btn-secondary" id="btnConsListadoCl">Consulta Listado Clientes</button>
+            <button type="submit" class="btn btn-secondary" id="btnConsListadoClB">Buscar Clientes</button>
+            <section class="row mt-2" id="seccionConsC">
+                <div>
+                    <button type="submit" class="btn btn-secondary" id="btnConsListadoC">Por ID</button>
+                    <button type="submit" class="btn btn-secondary" id="btnOrdAlf">Alfabeticamente</button>
+                    <button type="submit" class="btn btn-secondary" id="btnOrdD">Ticket con mayor
+                        atraso</button>
+                    <button type="submit" class="btn btn-secondary" id="btnConsListadoS">Por Saldo</button>
+                    <button type="submit" class="btn btn-secondary" id="limpiarConsultaCtas">Limpiar</button>
+                </div>
+                <div class="">
+                    <table id="tablaListadoC" class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Apellido / Nombre</th>
+                                <th id="thT">Teléfono</th>
+                                <th id="thS">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableListadoC">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <div id="buscandoCliente">
+                <div class="row col mt-2">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Buscar por nombre / apellido / id</h5>
+                            </div>
+                            <form class="card-body" id="formBusquedaCliente">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Apellido" class="form-control" id="apellidoC">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" step="0.01" placeholder="Nombre" class="form-control"
+                                        id="nombreC">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" step="0.01" placeholder="ID" class="form-control"
+                                        id="idBusquedaC">
+                                </div>
+                                <input type="submit" value="Buscar" class="btn btn-primary btn-block" />
+                                <input type="reset" value="Borrar / Limpiar Consulta" class="btn btn-primary btn-block"
+                                    id="borrarC" />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <section class="row col mt-2">
+                    <div class="col">
+                        <table id="tablaBusqueda" class="table text-center">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nombre y apellido</th>
+                                    <th>Teléfono</th>
+                                    <th>Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBusqueda">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
-            <div class="col-md-12" id="alta">
-
-            </div>
-        </section>
+        </div>
 
     </main>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

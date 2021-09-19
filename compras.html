@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
 	<meta charset="UTF-8">
@@ -31,10 +31,10 @@
 							<a class="nav-link active" aria-current="page" href="compras.html">Compras</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" href="#">Caja</a>
+							<a class="nav-link active" href="caja.html">Caja</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" href="#">Informes</a>
+							<a class="nav-link active" href="informes.html">Informes</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link active" href="clientes.html">Clientes</a>
@@ -77,8 +77,8 @@
 			</section>
 		</div>
 		<div class="row col-md-12">
-			<div id="factCompra" class="row col-md-7">
-				<section class="row mt-2 col-md-12">
+			<div class="col-md-7 mt-2 mx-auto" id="factCompra">
+				<section class="row col-md-12">
 					<div class="col">
 						<div class="card">
 							<div class="card-header">
@@ -106,7 +106,7 @@
 						</div>
 					</div>
 				</section>
-				<section class="row mt-2 col-md-12">
+				<section class="row col-md-12 mt-2">
 					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
@@ -149,7 +149,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-12 mt-2">
+					<div class="col-12">
 						<section class="row mt-2 col">
 							<div class="col">
 								<div class="card">
@@ -176,7 +176,7 @@
 						</section>
 					</div>
 				</section>
-				<section class="row mt-2 col-md-12">
+				<section class="row col-md-12">
 					<div class="col">
 
 						<table id="tablaCompra" class="table text-center">
@@ -201,69 +201,136 @@
 					</div>
 				</section>
 			</div>
-			<div class="col-md-5 mt-2 mx-auto" id="seccionConsultaProv">
-				<div class="col-12">
-					<div class="card">
-						<div class="card-header">
-							<h3>Info Proveedores / Pagos</h3>
-						</div>
-						<div class="card-body">
-							<form class="row col-md-12" id="formConsulta">
-								<div class="form-group col-md-2">
-									<label for="">Id:</label>
-									<input type="number" class="form-control" id="idConsultaProv" />
-								</div>
-								<div class="form-group col-md-4">
-									<label for="">Proveedor</label>
-									<input type="text" class="form-control" id="nombreConsultaProv" />
-								</div>
-								<div class="form-group mt-4 col-md-2">
-									<button type="submit" class="btn btn-secondary"
-										id="btnConsultaProv">Consultar</button>
-								</div>
-								<div class="form-group mt-4 col-md-2">
-									<button type="submit" class="btn btn-secondary"
-										id="btnLimpiarConsultaProv">Limpiar</button>
-								</div>
+			<div class="col-md-5 mt-2 mx-auto">
+				<div class="col-12" id="seccionConsultaProv">
+					<div>
+						<div class="card">
+							<div class="card-header">
+								<h3>Facturas Proveedores / Saldos pendientes / Pagos</h3>
+							</div>
+							<div class="card-body">
+								<form class="row col-md-12" id="formConsulta">
+									<div class="form-group col-md-2">
+										<label for="">Id:</label>
+										<input type="number" class="form-control" id="idConsultaProv" />
+									</div>
+									<div class="form-group col-md-4">
+										<label for="">Proveedor</label>
+										<input type="text" class="form-control" id="nombreConsultaProv" />
+									</div>
+									<div class="form-group mt-4 col-md-2">
+										<button type="submit" class="btn btn-secondary"
+											id="btnConsultaProv">Consultar</button>
+									</div>
+									<div class="form-group mt-4 col-md-3">
+										<button type="submit" class="btn btn-secondary"
+											id="btnLimpiarConsultaProv">Limpiar
+											/ Salir</button>
+									</div>
 
-							</form>
+								</form>
+							</div>
+						</div>
+						<div class="card mt-2">
+							<div class="card-body">
+								<form class="row" id="formPagoSaldoP">
+									<div class="form-group col-md-3">
+										<label for="">Total Pendiente:</label>
+										<input type="number" class="form-control alert-danger" id="totalPend"
+											disabled />
+									</div>
+									<div class="form-group col-md-3">
+										<label for="">Pagar:</label>
+										<input type="text" class="form-control" id="idPagoSaldo" />
+									</div>
+									<div class="form-group col-md-4">
+										<label for="">Fecha:</label>
+										<input type="date" class="form-control" id="fechaPagoSaldo" />
+									</div>
+									<div class="form-group col-md-4 mt-4">
+										<button type="submit" class="btn btn-secondary" id="btnPagarProv">Pagar</button>
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
-					<div class="card mt-2">
-						<div class="card-body">
-							<form class="row" id="formPagoSaldoP">
-								<div class="form-group col-md-3">
-									<label for="">Total Pendiente:</label>
-									<input type="number" class="form-control alert-danger" id="totalPend" />
-								</div>
-								<div class="form-group col-md-3">
-									<label for="">Pago:</label>
-									<input type="text" class="form-control" id="idPagoSaldo" />
-								</div>
-								<div class="form-group col-md-4 mt-4">
-									<button type="submit" class="btn btn-secondary" id="btnPagarProv">Pagar</button>
-								</div>
-							</form>
+					<section class="row mt-2 col-md-12">
+						<div class="col">
+							<table id="tablaInfoProv" class="table text-center">
+								<thead>
+									<tr>
+										<th>Fecha</th>
+										<th>Factura</th>
+										<th>Total</th>
+										<th>Pago</th>
+										<th>Pendiente</th>
+									</tr>
+								</thead>
+								<tbody id="tableInfoProv">
+								</tbody>
+							</table>
 						</div>
-					</div>
+					</section>
 				</div>
-				<section class="row mt-2 col-md-12">
-					<div class="col">
-						<table id="tablaInfoProv" class="table text-center">
-							<thead>
-								<tr>
-									<th>Fecha</th>
-									<th>Factura</th>
-									<th>Total</th>
-									<th>Pago</th>
-									<th>Pendiente</th>
-								</tr>
-							</thead>
-							<tbody id="tableInfoProv">
-							</tbody>
-						</table>
+
+
+
+				<div class="col-12 mt-5" id="seccionConsultaCtaP">
+					<div>
+						<div class="card">
+							<div class="card-header">
+								<h3>Consulta Cuentas Proveedores</h3>
+							</div>
+							<div class="card-body">
+								<form class="row col-md-12" id="formConsultaCtaP">
+									<div class="form-group col-md-2">
+										<label for="">Id:</label>
+										<input type="number" class="form-control" id="idConsultaCtaP" />
+									</div>
+									<div class="form-group col-md-4">
+										<label for="">Proveedor</label>
+										<input type="text" class="form-control" id="ctaProv" />
+									</div>
+									<div class="form-group mt-4 col-md-2">
+										<button type="submit" class="btn btn-secondary"
+											id="btnConsCtaP">Consultar</button>
+									</div>
+									<div class="form-group mt-4 col-md-3">
+										<button type="submit" class="btn btn-secondary" id="btnLimpConsultaCtaP">Limpiar
+											/ Salir</button>
+									</div>
+
+								</form>
+							</div>
+						</div>
+						<div class="card mt-2">
+							<div class="card-body">
+								<form class="row" id="formSaldoP">
+									<div class="form-group col-md-3">
+										<label for="">Saldo:</label>
+										<input type="number" class="form-control alert-danger" id="saldoCtaP"
+											disabled />
+									</div>
+								</form>
+							</div>
+						</div>
 					</div>
-				</section>
+					<section class="row mt-2 col-md-12">
+						<div class="col">
+							<table id="tablaInfoCtaP" class="table text-center">
+								<thead>
+									<tr>
+										<th>Fecha</th>
+										<th>Debe (total factura)</th>
+										<th>Haber (pago)</th>
+									</tr>
+								</thead>
+								<tbody id="tableInfoCtaP">
+								</tbody>
+							</table>
+						</div>
+					</section>
+				</div>
 			</div>
 		</div>
 
